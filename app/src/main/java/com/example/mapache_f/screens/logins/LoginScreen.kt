@@ -20,9 +20,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mapache_f.R
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.UserInfo
+//import com.google.firebase.auth.UserInfo
 import com.google.firebase.database.FirebaseDatabase
-//import com.example.mapache_f.classes.UserInfo
+import com.example.mapache_f.classes.UserInfo
 
 
 @Composable

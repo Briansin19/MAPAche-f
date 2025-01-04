@@ -23,6 +23,7 @@ import com.example.mapache_f.ui.theme.MAPAchefTheme
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.example.mapache_f.R
 import com.example.mapache_f.screens.logins.LoginScreen
+import com.example.mapache_f.screens.map.MapScreen
 
 
 class MainActivity : ComponentActivity() {
