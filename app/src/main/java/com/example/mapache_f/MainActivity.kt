@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -34,8 +35,10 @@ import com.example.mapache_f.screens.events.EventMainScreen
 import com.example.mapache_f.screens.events.RegisterEventScreen
 import com.example.mapache_f.screens.logins.LoginScreen
 import com.example.mapache_f.screens.logins.SignUpScreen
+import com.example.mapache_f.screens.map.BuildingEntity
 import com.example.mapache_f.screens.map.MapScreen
 import com.example.mapache_f.screens.map.MapViewModel
+import com.example.mapache_f.screens.map.MyApplication
 import com.example.mapache_f.screens.roomTypes.DeleteRoomTypeScreen
 import com.example.mapache_f.screens.roomTypes.EditRoomTypeScreen
 import com.example.mapache_f.screens.roomTypes.RegisterRoomTypeScreen
@@ -46,6 +49,9 @@ import com.example.mapache_f.screens.rooms.EditRoomScreen
 import com.example.mapache_f.screens.rooms.RegisterRoomScreen
 import com.example.mapache_f.screens.rooms.RoomListScreen
 import com.example.mapache_f.screens.rooms.RoomMainScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : ComponentActivity() {
@@ -59,6 +65,30 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        /*
+        // Insertar datos en la base de datos
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                val buildings = listOf(
+                    BuildingEntity("Building 1", 10.0, 20.0),
+                    BuildingEntity("Building 2", 30.0, 40.0)
+                )
+                MyApplication.database.buildingDao().insertBuildings(buildings)
+            }
+        }
+         */
+
+        // Recuperar datos de la base de datos
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                val buildings = MyApplication.database.buildingDao().getAllBuildings()
+                buildings.forEach {
+                    println("Building: ${it.name}, Lat: ${it.lat}, Lng: ${it.lng}")
+                }
+            }
+        }
+
     }
 }
 

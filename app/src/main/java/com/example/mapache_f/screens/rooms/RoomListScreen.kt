@@ -11,8 +11,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.mapache_f.classes.Room // Import your Room data class
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -73,5 +75,13 @@ fun RoomItem(room: Room) {
         Text("Building ID: ${room.buildingId}")
         Text("Floor Number: ${room.floorNumber}")
         Spacer(modifier = Modifier.height(8.dp))
+    }
+}
+
+@Preview
+@Composable
+fun RoomListScreenPreview() {
+    Surface(color = Color.White) {
+        RoomListScreen(navController = rememberNavController())
     }
 }
