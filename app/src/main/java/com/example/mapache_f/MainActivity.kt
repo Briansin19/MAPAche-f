@@ -24,6 +24,9 @@ import com.example.mapache_f.ui.theme.naranjaTec
 import com.example.mapache_f.R
 import com.example.mapache_f.screens.logins.LoginScreen
 import com.example.mapache_f.screens.map.MapScreen
+import com.example.mapache_f.screens.map.MapViewModel
+
+
 
 
 class MainActivity : ComponentActivity() {
@@ -32,7 +35,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MAPAchefTheme {
                 Surface(color = Color.White) {
-                    MyAppNavHost()
+                    MyAppNavHost(viewModel = viewModel)
                 }
             }
         }
@@ -40,11 +43,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyAppNavHost() {
+fun MyAppNavHost(viewModel: MapViewModel) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "main") {
         composable("main") { MainScreen(navController) }
-        composable("map") { MapScreen() }
+        composable("map") { MapScreen(viewModel) }
         composable("login") { LoginScreen(navController) }
         composable("signup") { SignUpScreen() }
     }
