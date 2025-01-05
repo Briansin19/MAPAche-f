@@ -1,4 +1,4 @@
-package com.example.mapache_f.screens.events
+package com.example.mapache_f.screens.rooms
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,7 +17,7 @@ import com.example.mapache_f.R
 import com.example.mapache_f.ui.theme.naranjaTec
 
 @Composable
-fun EventMainScreen(navController: NavController) {
+fun RoomMainScreen(navController: NavController) {
     Surface(color = Color.White) {
         Column(
             modifier = Modifier
@@ -38,7 +38,7 @@ fun EventMainScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { navController.navigate("registerEvent") }, // Navigate to register event screen
+                onClick = { navController.navigate("registerRoom") }, // Navigate to register room screen
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -48,7 +48,7 @@ fun EventMainScreen(navController: NavController) {
             }
 
             Button(
-                onClick = { navController.navigate("eventList") }, // Navigate to event list screen
+                onClick = { navController.navigate("roomList") }, // Navigate to room list screen
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -58,7 +58,7 @@ fun EventMainScreen(navController: NavController) {
             }
 
             Button(
-                onClick = { navController.navigate("editEvent") }, // Navigate to edit event screen
+                onClick = { navController.navigate("editRoom") }, // Navigate to edit room screen
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -68,7 +68,7 @@ fun EventMainScreen(navController: NavController) {
             }
 
             Button(
-                onClick = { navController.navigate("deleteEvent") }, // Navigate to delete event screen
+                onClick = { navController.navigate("deleteRoom") }, // Navigate to delete room screen
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),

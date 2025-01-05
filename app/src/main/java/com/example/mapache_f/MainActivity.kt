@@ -36,6 +36,11 @@ import com.example.mapache_f.screens.logins.LoginScreen
 import com.example.mapache_f.screens.logins.SignUpScreen
 import com.example.mapache_f.screens.map.MapScreen
 import com.example.mapache_f.screens.map.MapViewModel
+import com.example.mapache_f.screens.rooms.DeleteRoomScreen
+import com.example.mapache_f.screens.rooms.EditRoomScreen
+import com.example.mapache_f.screens.rooms.RegisterRoomScreen
+import com.example.mapache_f.screens.rooms.RoomListScreen
+import com.example.mapache_f.screens.rooms.RoomMainScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -69,6 +74,11 @@ fun MyAppNavHost(viewModel: MapViewModel) {
         composable("eventList") { EventListScreen(navController) }
         composable("editEvent") { EditEventScreen(navController) }
         composable("deleteEvent") { DeleteEventScreen(navController) }
+        composable("roomMain") { RoomMainScreen(navController) }
+        composable("registerRoom") { RegisterRoomScreen(navController) }
+        composable("roomList") { RoomListScreen(navController) }
+        composable("editRoom") { EditRoomScreen(navController) }
+        composable("deleteRoom") { DeleteRoomScreen(navController) }
     }
 }
 
