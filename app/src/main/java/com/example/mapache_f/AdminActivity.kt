@@ -48,7 +48,7 @@ fun AdminScreen(navController: NavController) {
             }
 
             Button(
-                onClick = { navController.navigate("roomButtons") },
+                onClick = { navController.navigate("roomMain") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -58,7 +58,7 @@ fun AdminScreen(navController: NavController) {
             }
 
             Button(
-                onClick = { navController.navigate("roomTypeButtons") },
+                onClick = { navController.navigate("roomTypeMain") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -68,7 +68,7 @@ fun AdminScreen(navController: NavController) {
             }
 
             Button(
-                onClick = { navController.navigate("eventButtons") },
+                onClick = { navController.navigate("eventMain") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),

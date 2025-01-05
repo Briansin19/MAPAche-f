@@ -47,7 +47,7 @@ fun RegisterBuildingScreen(navController: NavController) {
                 .addOnSuccessListener {
                     Log.d("RegisterBuilding", "Building stored successfully")
                     Toast.makeText(context, "Building registered successfully", Toast.LENGTH_SHORT).show()
-                    navController.navigate("buildingButtons") // Navigate back to building buttons screen
+                    navController.navigate("buildingMain") // Navigate back to building buttons screen
                 }
                 .addOnFailureListener { e ->
                     Log.w("RegisterBuilding", "Error storing Building", e)

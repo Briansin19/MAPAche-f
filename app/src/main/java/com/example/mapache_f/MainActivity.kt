@@ -27,6 +27,11 @@ import com.example.mapache_f.screens.AdminScreen
 import com.example.mapache_f.screens.buildings.BuildingListScreen
 import com.example.mapache_f.screens.buildings.BuildingMainScreen
 import com.example.mapache_f.screens.buildings.RegisterBuildingScreen
+import com.example.mapache_f.screens.events.DeleteEventScreen
+import com.example.mapache_f.screens.events.EditEventScreen
+import com.example.mapache_f.screens.events.EventListScreen
+import com.example.mapache_f.screens.events.EventMainScreen
+import com.example.mapache_f.screens.events.RegisterEventScreen
 import com.example.mapache_f.screens.logins.LoginScreen
 import com.example.mapache_f.screens.logins.SignUpScreen
 import com.example.mapache_f.screens.map.MapScreen
@@ -59,6 +64,11 @@ fun MyAppNavHost(viewModel: MapViewModel) {
         composable("buildingMain") { BuildingMainScreen(navController) }
         composable("registerBuilding") { RegisterBuildingScreen(navController) }
         composable("buildingList") { BuildingListScreen(navController) }
+        composable("eventMain") { EventMainScreen(navController) }
+        composable("registerEvent") { RegisterEventScreen(navController) }
+        composable("eventList") { EventListScreen(navController) }
+        composable("editEvent") { EditEventScreen(navController) }
+        composable("deleteEvent") { DeleteEventScreen(navController) }
     }
 }
 
