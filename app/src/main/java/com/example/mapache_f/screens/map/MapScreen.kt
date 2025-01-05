@@ -1,6 +1,7 @@
 package com.example.mapache_f.screens.map
 
 import android.Manifest
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.util.Log
@@ -43,25 +44,50 @@ import org.osmdroid.views.overlay.Polyline
 //import org.osmdroid.views.overlay.Polyline
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import retrofit2.await
-
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import org.osmdroid.bonuspack.BuildConfig
+
+//import org.osmdroid.bonuspack.BuildConfig
+//import com.example.mapache_f.BuildConfig
 
 
 class MapFragment : Fragment() {
 
     private val viewModel: MapViewModel by viewModels()
 
+    private val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+            // Permisos concedidos
+            viewModel.enableMyLocation()
+        } else {
+            // Permisos denegados
+            Toast.makeText(requireContext(), "Permisos de ubicación necesarios", Toast.LENGTH_LONG).show()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Configuration.getInstance().load(requireContext(), requireContext().getSharedPreferences("osmdroid", MODE_PRIVATE))
+
+        // Solicitar permisos de ubicación
+                locationPermissionRequest.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+        //Configuration.getInstance().load(requireContext(), requireContext().getSharedPreferences("osmdroid", MODE_PRIVATE))
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,7 +95,7 @@ class MapFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                MAPAchefTheme() {
+                MAPAchefTheme {
                     MapScreen(viewModel)
                 }
             }
@@ -392,6 +418,7 @@ fun MapScreen(viewModel: MapViewModel) {
                     modifier = Modifier.fillMaxSize(),
                     factory = {
                         MapView(context).apply {
+                            Configuration.getInstance().userAgentValue = "com.example.mapache_f"
                             Configuration.getInstance().setMapViewHardwareAccelerated(false)
 
                             // Deshabilitar las repeticiones
