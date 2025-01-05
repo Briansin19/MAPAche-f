@@ -3,7 +3,9 @@ package com.example.mapache_f.screens.logins
 import android.widget.Toast
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +17,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.mapache_f.R
@@ -23,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 //import com.google.firebase.auth.UserInfo
 import com.google.firebase.database.FirebaseDatabase
 import com.example.mapache_f.classes.UserInfo
+import com.example.mapache_f.ui.theme.blancoTec
 
 
 @Composable
@@ -73,72 +78,85 @@ fun LoginScreen(navController: NavController) {
     }
 
     Surface(color = Color.White) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = "Iniciar Sesión",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                alignment = Alignment.Center
-            )
-
-            // Email Input
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email") },
-                modifier = Modifier
-                    .fillMaxWidth()
+                    .align(Alignment.TopCenter)
                     .padding(16.dp)
+                    .background(color = blancoTec, shape = RoundedCornerShape(8.dp))
+                    .padding(8.dp),
+                color = Color.Black
             )
-
-            // Password Input
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .padding(16.dp),
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    val image = if (passwordVisible)
-                        painterResource(id = R.drawable.eye_solid)
-                    else
-                        painterResource(id = R.drawable.eye_slash_solid)
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    alignment = Alignment.Center
+                )
 
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(painter = image, contentDescription = null)
+                // Email Input
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
+
+                // Password Input
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        val image = if (passwordVisible)
+                            painterResource(id = R.drawable.eye_solid)
+                        else
+                            painterResource(id = R.drawable.eye_slash_solid)
+
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(painter = image, contentDescription = null)
+                        }
                     }
+                )
+
+                // Login Button
+                Button(
+                    onClick = { handleLogin(email, password) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                ) {
+                    Text("Acceder")
                 }
-            )
 
-            // Login Button
-            Button(
-                onClick = { handleLogin(email, password) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
-            ) {
-                Text("Acceder")
-            }
-
-            // Sign Up Button
-            TextButton(
-                onClick = { navController.navigate("signup") },
-                modifier = Modifier
-                    .padding(16.dp),
-                colors = ButtonDefaults.textButtonColors(contentColor = naranjaTec)
-            ) {
-                Text("No tengo una cuenta")
+                // Sign Up Button
+                TextButton(
+                    onClick = { navController.navigate("signup") },
+                    modifier = Modifier
+                        .padding(16.dp),
+                    colors = ButtonDefaults.textButtonColors(contentColor = naranjaTec)
+                ) {
+                    Text("No tengo una cuenta")
+                }
             }
         }
     }

@@ -12,3 +12,4 @@ val Pink40 = Color(0xFF7D5260)
 
 val azulTec = Color(0xFF23438B)
 val naranjaTec = Color(0xFFFD9727)
+val blancoTec = Color(0xFFF5ECE6)
