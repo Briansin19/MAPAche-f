@@ -36,6 +36,11 @@ import com.example.mapache_f.screens.logins.LoginScreen
 import com.example.mapache_f.screens.logins.SignUpScreen
 import com.example.mapache_f.screens.map.MapScreen
 import com.example.mapache_f.screens.map.MapViewModel
+import com.example.mapache_f.screens.roomTypes.DeleteRoomTypeScreen
+import com.example.mapache_f.screens.roomTypes.EditRoomTypeScreen
+import com.example.mapache_f.screens.roomTypes.RegisterRoomTypeScreen
+import com.example.mapache_f.screens.roomTypes.RoomTypeListScreen
+import com.example.mapache_f.screens.roomTypes.RoomTypeMainScreen
 import com.example.mapache_f.screens.rooms.DeleteRoomScreen
 import com.example.mapache_f.screens.rooms.EditRoomScreen
 import com.example.mapache_f.screens.rooms.RegisterRoomScreen
@@ -79,6 +84,11 @@ fun MyAppNavHost(viewModel: MapViewModel) {
         composable("roomList") { RoomListScreen(navController) }
         composable("editRoom") { EditRoomScreen(navController) }
         composable("deleteRoom") { DeleteRoomScreen(navController) }
+        composable("roomTypeMain") { RoomTypeMainScreen(navController) }
+        composable("registerRoomType") { RegisterRoomTypeScreen(navController) }
+        composable("roomTypeList") { RoomTypeListScreen(navController) }
+        composable("editRoomType") { EditRoomTypeScreen(navController) }
+        composable("deleteRoomType") { DeleteRoomTypeScreen(navController) }
     }
 }
 
