@@ -24,6 +24,7 @@ import com.example.mapache_f.ui.theme.MAPAchefTheme
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.example.mapache_f.R
 import com.example.mapache_f.screens.logins.LoginScreen
+import com.example.mapache_f.screens.logins.SignUpScreen
 import com.example.mapache_f.screens.map.MapScreen
 import com.example.mapache_f.screens.map.MapViewModel
 
@@ -49,7 +50,7 @@ fun MyAppNavHost(viewModel: MapViewModel) {
         composable("main") { MainScreen(navController) }
         composable("map") { MapScreen(viewModel) }
         composable("login") { LoginScreen(navController) }
-        composable("signup") { SignUpScreen() }
+        composable("signup") { SignUpScreen(navController) }
     }
 }
 
