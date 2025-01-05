@@ -41,7 +41,6 @@ fun BuildingListScreen(navController: NavController) {
         }
     }
 
-    // Fetch buildings from Firebase
     LaunchedEffect(Unit) {
         buildingsRef.addValueEventListener(buildingListener)
     }
