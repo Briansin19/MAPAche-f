@@ -23,6 +23,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mapache_f.ui.theme.MAPAchefTheme
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.example.mapache_f.R
+import com.example.mapache_f.screens.AdminScreen
+import com.example.mapache_f.screens.buildings.BuildingMainScreen
 import com.example.mapache_f.screens.logins.LoginScreen
 import com.example.mapache_f.screens.logins.SignUpScreen
 import com.example.mapache_f.screens.map.MapScreen
@@ -48,9 +50,11 @@ fun MyAppNavHost(viewModel: MapViewModel) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "main") {
         composable("main") { MainScreen(navController) }
+        composable("admin") { AdminScreen(navController) }
         composable("map") { MapScreen(viewModel) }
         composable("login") { LoginScreen(navController) }
         composable("signup") { SignUpScreen(navController) }
+        composable("buildingMain") { BuildingMainScreen(navController) }
     }
 }
 
@@ -89,11 +93,6 @@ fun MainScreen(navController: NavController) {
             Text("Sign Up")
         }
     }
-}
-
-@Composable
-fun SignUpScreen() {
-    // Implementa la pantalla de registro aquí
 }
 
 @Preview
