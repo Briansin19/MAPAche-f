@@ -61,24 +61,24 @@ fun AdminScreen(navController: NavController) {
                 item {
                     AdminButton(
                         navController = navController,
-                        route = "roomButtons",
-                        text = "Room",
+                        route = "roomMain",
+                        text = "Rooms",
                         iconRes = R.drawable.house_solid
                     )
                 }
                 item {
                     AdminButton(
                         navController = navController,
-                        route = "roomTypeButtons",
-                        text = "Room Type",
+                        route = "roomTypeMain",
+                        text = "Room Types",
                         iconRes = R.drawable.house_circle_exclamation_solid
                     )
                 }
                 item {
                     AdminButton(
                         navController = navController,
-                        route = "eventButtons",
-                        text = "Event",
+                        route = "eventMain",
+                        text = "Events",
                         iconRes = R.drawable.calendar_days_solid
                     )
                 }
