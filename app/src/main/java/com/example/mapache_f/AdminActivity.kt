@@ -18,14 +18,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter.Companion.tint
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mapache_f.R
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.blancoTec
 import com.example.mapache_f.ui.theme.naranjaTec
 
@@ -38,11 +41,11 @@ fun AdminScreen(navController: NavController) {
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .align(Alignment.TopStart)
+                    .align(Alignment.TopCenter)
                     .padding(16.dp)
                     .background(color = blancoTec, shape = RoundedCornerShape(8.dp))
                     .padding(8.dp),
-                color = Color.Black
+                color = azulTec
             )
             Column(
                 modifier = Modifier
@@ -113,9 +116,11 @@ fun AdminScreen(navController: NavController) {
 fun AdminButton(navController: NavController, route: String, text: String, iconRes: Int) {
     Button(
         onClick = { navController.navigate(route) },
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
-            .size(140.dp) // Ajusta el tamaño para que sea más cuadrado
-            .padding(vertical = 8.dp),
+            .width(120.dp)
+            .height(150.dp)
+            .padding(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -126,7 +131,7 @@ fun AdminButton(navController: NavController, route: String, text: String, iconR
                 colorFilter = tint(Color.White) // Aplica el filtro de color blanco
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text)
+            Text(text, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
         }
     }
 }

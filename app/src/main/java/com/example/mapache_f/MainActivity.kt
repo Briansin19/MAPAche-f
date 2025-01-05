@@ -66,19 +66,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        /*
-        // Insertar datos en la base de datos
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                val buildings = listOf(
-                    BuildingEntity("Building 1", 10.0, 20.0),
-                    BuildingEntity("Building 2", 30.0, 40.0)
-                )
-                MyApplication.database.buildingDao().insertBuildings(buildings)
-            }
-        }
-         */
-
         // Recuperar datos de la base de datos
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
