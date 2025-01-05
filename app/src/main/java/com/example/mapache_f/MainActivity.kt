@@ -3,6 +3,7 @@ package com.example.mapache_f
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -15,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,10 +27,9 @@ import com.example.mapache_f.screens.logins.LoginScreen
 import com.example.mapache_f.screens.map.MapScreen
 import com.example.mapache_f.screens.map.MapViewModel
 
-private val viewModel: MapViewModel by viewModels()
-
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: MapViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
