@@ -278,7 +278,7 @@ fun EditRoomScreen(navController: NavController) {
                 OutlinedTextField(
                     value = roomDescription,
                     onValueChange = { roomDescription = it },
-                    label = { Text("DescripciÃ³n del Lugar") },
+                    label = { Text("Descripción del Lugar") },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = naranjaTec,
                         unfocusedBorderColor = azulTec,
@@ -371,7 +371,7 @@ fun EditRoomScreen(navController: NavController) {
                     onValueChange = { newValue ->
                         floorNumber = newValue.filter { it.isDigit() }
                     },
-                    label = { Text("NÃºmero de Piso") },
+                    label = { Text("Número de Piso") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = naranjaTec,

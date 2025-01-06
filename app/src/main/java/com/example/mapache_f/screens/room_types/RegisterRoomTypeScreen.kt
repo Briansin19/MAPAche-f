@@ -111,7 +111,7 @@ fun RegisterRoomTypeScreen(navController: NavController) {
                 OutlinedTextField(
                     value = roomTypeDescription,
                     onValueChange = { roomTypeDescription = it },
-                    label = { Text("DescripciÃ³n del Tipo de Lugar") },
+                    label = { Text("Descripción del Tipo de Lugar") },
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = naranjaTec,
                         unfocusedBorderColor = azulTec,

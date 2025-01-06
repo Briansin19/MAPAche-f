@@ -120,7 +120,7 @@ fun RoomTypeCard(roomType: RoomTypes) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = "ID: ${roomType.id}", fontSize = 16.sp, color = azulTec)
             Text(text = "Nombre: ${roomType.name}", fontSize = 18.sp, color = naranjaTec)
-            Text(text = "DescripciÃ³n: ${roomType.description}", fontSize = 14.sp, color = Color.Gray)
+            Text(text = "Descripción: ${roomType.description}", fontSize = 14.sp, color = Color.Gray)
         }
     }
 }
