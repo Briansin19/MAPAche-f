@@ -6,35 +6,30 @@ import android.util.Log
 import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
-import android.provider.CalendarContract
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mapache_f.R
 import com.example.mapache_f.classes.Events
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.util.Calendar
-import kotlin.text.get
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +46,9 @@ fun EditEventScreen(navController: NavController) {
     var roomIdMap by remember { mutableStateOf(mapOf<String, String>()) }
     var eventNames by remember { mutableStateOf(listOf<String>()) }
     var updateSuccess by remember { mutableStateOf(false) }
+    var expandedEvent by remember { mutableStateOf(false) }
+    var expandedRoom by remember { mutableStateOf(false) }
+    var isBackButtonEnabled by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
 
@@ -95,33 +93,6 @@ fun EditEventScreen(navController: NavController) {
 
         override fun onCancelled(databaseError: DatabaseError) {
             Log.e("EditEventScreen", "Error fetching event names: ${databaseError.message}")
-        }
-    }
-
-    val datePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == android.app.Activity.RESULT_OK) {
-            val intent = result.data
-            if (intent != null) {
-                val day = intent.getIntExtra( CalendarContract.EXTRA_EVENT_BEGIN_TIME, 0)
-                val month = intent.getIntExtra(CalendarContract.EXTRA_EVENT_END_TIME, 0)
-                val year = intent.getIntExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, 0)
-                eventStartDate = "$day/${month + 1}/$year" // Update eventStartDate state
-            }
-        }
-    }
-
-    val timePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == android.app.Activity.RESULT_OK) {
-            val intent = result.data
-            if (intent != null) {
-                val hourOfDay = intent.getIntExtra(CalendarContract.EXTRA_EVENT_ID, 0)
-                val minute = intent.getIntExtra(CalendarContract.Instances.EVENT_ID, 0)
-                eventStartHour = String.format("%02d:%02d", hourOfDay, minute) // Update eventStartHour state
-            }
         }
     }
 
@@ -217,215 +188,276 @@ fun EditEventScreen(navController: NavController) {
         }
     }
 
-    Surface(color = Color.White) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Event Spinner
-            var expandedEventSpinner by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expandedEventSpinner,
-                onExpandedChange = { expandedEventSpinner = !expandedEventSpinner }
+    Surface(color = Color.White, modifier = Modifier
+        .fillMaxSize()
+        .padding(WindowInsets.systemBars.asPaddingValues())
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            IconButton(
+                onClick = {
+                    if (isBackButtonEnabled) {
+                        isBackButtonEnabled = false
+                        navController.popBackStack()
+                    }
+                },
+                enabled = isBackButtonEnabled,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
             ) {
-                TextField(
-                    value = selectedEventName,
-                    onValueChange = { selectedEventName = it },
-                    readOnly = true,
-                    label = { Text("Select Event") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedEventSpinner) },
+                Icon(
+                    painter = painterResource(id = R.drawable.chevron_left_solid),
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Editar Evento",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = azulTec,
                     modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp)
                 )
 
-                ExposedDropdownMenu(
-                    expanded = expandedEventSpinner,
-                    onDismissRequest = { expandedEventSpinner = false }
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.padding(8.dp),
+                    expanded = expandedEvent,
+                    onExpandedChange = { expandedEvent = !expandedEvent }
                 ) {
-                    eventNames.forEach { eventName ->
-                        DropdownMenuItem(
-                            text = { Text(eventName) },
-                            onClick = {
-                                selectedEventName = eventName
-                                expandedEventSpinner = false
-                            }
+                    TextField(
+                        value = selectedEventName,
+                        onValueChange = { selectedEventName = it },
+                        readOnly = true,
+                        label = { Text("Seleccionar Evento") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedEvent) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedEvent,
+                        onDismissRequest = { expandedEvent = false }
+                    ) {
+                        eventNames.forEach { eventName ->
+                            DropdownMenuItem(
+                                text = { Text(eventName) },
+                                onClick = {
+                                    selectedEventName = eventName
+                                    expandedEvent = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = eventName,
+                    onValueChange = { eventName = it },
+                    label = { Text("Nombre del Evento") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                OutlinedTextField(
+                    value = eventDescription,
+                    onValueChange = { eventDescription = it },
+                    label = { Text("Descripción del Evento") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = eventStartHour,
+                        onValueChange = { eventStartHour = it },
+                        label = { Text("Hora de Inicio") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        readOnly = true,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = naranjaTec,
+                            unfocusedBorderColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    )
+                    IconButton(onClick = {
+                        val calendar = Calendar.getInstance()
+                        val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+                        val currentMinute = calendar.get(Calendar.MINUTE)
+
+                        val timePickerDialog = TimePickerDialog(
+                            context,
+                            { _: TimePicker, hourOfDay: Int, minute: Int ->
+                                eventStartHour = String.format("%02d:%02d", hourOfDay, minute)
+                            },
+                            currentHour,
+                            currentMinute,
+                            true
+                        )
+                        timePickerDialog.show()
+                    }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.schedule),
+                            contentDescription = "Seleccione la Hora"
                         )
                     }
                 }
-            }
 
-            // Event Name
-            OutlinedTextField(
-                value = eventName,
-                onValueChange = { eventName = it },
-                label = { Text("Event Name") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = eventStartDate,
+                        onValueChange = { eventStartDate = it },
+                        label = { Text("Fecha de Inicio") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        readOnly = true,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = naranjaTec,
+                            unfocusedBorderColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    )
+                    IconButton(onClick = {
+                        val calendar = Calendar.getInstance()
+                        val currentYear = calendar.get(Calendar.YEAR)
+                        val currentMonth = calendar.get(Calendar.MONTH)
+                        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
 
-            // Event Description
-            OutlinedTextField(
-                value = eventDescription,
-                onValueChange = { eventDescription = it },
-                label = { Text("Event Description") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            var expandedRoomSpinner by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expandedRoomSpinner,
-                onExpandedChange = { expandedRoomSpinner = !expandedRoomSpinner }
-            ) {
-                TextField(
-                    value = selectedRoomId,
-                    onValueChange = { selectedRoomId = it },
-                    readOnly = true,
-                    label = { Text("Room") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomSpinner) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expandedRoomSpinner,
-                    onDismissRequest = { expandedRoomSpinner = false }
-                ) {
-                    roomNames.forEach { roomName ->
-                        DropdownMenuItem(
-                            text = { Text(roomName) },
-                            onClick = {
-                                selectedRoomId = roomName
-                                expandedRoomSpinner = false
-                            }
+                        val datePickerDialog = DatePickerDialog(
+                            context,
+                            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                                eventStartDate = "$dayOfMonth/${month + 1}/$year"
+                            },
+                            currentYear,
+                            currentMonth,
+                            currentDay
+                        )
+                        datePickerDialog.show()
+                    }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.baseline_calendar_today_24),
+                            contentDescription = "Seleccione la Fecha De Inicio"
                         )
                     }
                 }
-            }
 
-            // Event Start Hour
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(
-                    value = eventStartHour,
-                    onValueChange = { eventStartHour = it },
-                    label = { Text("Start Hour") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    readOnly = true,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                )
-                IconButton(onClick = {
-                    val calendar = Calendar.getInstance()
-                    val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
-                    val currentMinute = calendar.get(Calendar.MINUTE)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = eventEndDate,
+                        onValueChange = { eventEndDate = it },
+                        label = { Text("Fecha de Fin") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        readOnly = true,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = naranjaTec,
+                            unfocusedBorderColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                    )
+                    IconButton(onClick = {
+                        val calendar = Calendar.getInstance()
+                        val currentYear = calendar.get(Calendar.YEAR)
+                        val currentMonth = calendar.get(Calendar.MONTH)
+                        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
 
-                    val timePickerDialog = TimePickerDialog(
-                        context,
-                        { _: TimePicker, hourOfDay: Int, minute: Int ->
-                            eventStartHour = String.format("%02d:%02d", hourOfDay, minute)
-                        },
-                        currentHour,
-                        currentMinute,
-                        true
-                    )
-                    timePickerDialog.show()
-                }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.schedule),
-                        contentDescription = "Seleccione la Hora"
-                    )
+                        val datePickerDialog = DatePickerDialog(
+                            context,
+                            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
+                                eventEndDate = "$dayOfMonth/${month + 1}/$year"
+                            },
+                            currentYear,
+                            currentMonth,
+                            currentDay
+                        )
+                        datePickerDialog.show()
+                    }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.baseline_calendar_today_24),
+                            contentDescription = "Seleccione la Fecha De Finalización"
+                        )
+                    }
                 }
-            }
 
-            // Event Start Date
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(
-                    value = eventStartDate,
-                    onValueChange = { eventStartDate = it },
-                    label = { Text("Start Date") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    readOnly = true,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                )
-                IconButton(onClick = {
-                    val calendar = Calendar.getInstance()
-                    val currentYear = calendar.get(Calendar.YEAR)
-                    val currentMonth = calendar.get(Calendar.MONTH)
-                    val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.padding(8.dp),
+                    expanded = expandedRoom,
+                    onExpandedChange = { expandedRoom = !expandedRoom }
+                ) {
+                    TextField(
+                        value = selectedRoomId,
+                        onValueChange = { selectedRoomId = it },
+                        readOnly = true,
+                        label = { Text("Sala") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoom) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
 
-                    val datePickerDialog = DatePickerDialog(
-                        context,
-                        { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                            eventStartDate = "$dayOfMonth/${month + 1}/$year"
-                        },
-                        currentYear,
-                        currentMonth,
-                        currentDay
-                    )
-                    datePickerDialog.show()
-                }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_calendar_today_24),
-                        contentDescription = "Seleccione la Fecha De Inicio"
-                    )
+                    ExposedDropdownMenu(
+                        expanded = expandedRoom,
+                        onDismissRequest = { expandedRoom = false }
+                    ) {
+                        roomNames.forEach { roomName ->
+                            DropdownMenuItem(
+                                text = { Text(roomName) },
+                                onClick = {
+                                    selectedRoomId = roomName
+                                    expandedRoom = false
+                                }
+                            )
+                        }
+                    }
                 }
-            }
 
-            // Event End Date
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(
-                    value = eventEndDate,
-                    onValueChange = { eventEndDate = it },
-                    label = { Text("End Date") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    readOnly = true,
+                Button(
+                    onClick = { updateEvent() },
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                )
-                IconButton(onClick = {
-                    val calendar = Calendar.getInstance()
-                    val currentYear = calendar.get(Calendar.YEAR)
-                    val currentMonth = calendar.get(Calendar.MONTH)
-                    val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
-
-                    val datePickerDialog = DatePickerDialog(
-                        context,
-                        { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                            eventEndDate = "$dayOfMonth/${month + 1}/$year"
-                        },
-                        currentYear,
-                        currentMonth,
-                        currentDay
-                    )
-                    datePickerDialog.show()
-                }) {
-                    Image(
-                        painter = painterResource(id = R.drawable.baseline_calendar_today_24),
-                        contentDescription = "Seleccione la Fecha De Finalización"
-                    )
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                ) {
+                    Text("Actualizar Evento", color = Color.White)
                 }
-            }
-
-            // Update Button
-            Button(
-                onClick = { updateEvent() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
-            ) {
-                Text("Update Event")
             }
         }
     }

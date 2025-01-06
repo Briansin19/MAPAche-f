@@ -1,81 +1,149 @@
 package com.example.mapache_f.screens.rooms
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mapache_f.R
+import com.example.mapache_f.ui.theme.blancoTec
 import com.example.mapache_f.ui.theme.naranjaTec
 
 @Composable
 fun RoomMainScreen(navController: NavController) {
-    Surface(color = Color.White) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+    var isBackButtonEnabled by remember { mutableStateOf(true) }
+
+    Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.systemBars.asPaddingValues())
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = null,
+            IconButton(
+                onClick = {
+                    if (isBackButtonEnabled) {
+                        isBackButtonEnabled = false
+                        navController.popBackStack()
+                    }
+                },
+                enabled = isBackButtonEnabled,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                alignment = Alignment.Center
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.chevron_left_solid),
+                    contentDescription = "AtrÃ¡s",
+                    tint = Color.Black
+                )
+            }
+            Text(
+                text = "Lugares",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp)
+                    .background(color = blancoTec, shape = RoundedCornerShape(8.dp))
+                    .padding(8.dp),
+                color = Color.Black
             )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Button(
-                onClick = { navController.navigate("registerRoom") }, // Navigate to register room screen
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Crear")
-            }
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    alignment = Alignment.Center
+                )
 
-            Button(
-                onClick = { navController.navigate("roomList") }, // Navigate to room list screen
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
-            ) {
-                Text("Ver")
-            }
+                Spacer(modifier = Modifier.height(32.dp))
 
-            Button(
-                onClick = { navController.navigate("editRoom") }, // Navigate to edit room screen
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
-            ) {
-                Text("Modificar")
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(350.dp),
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    item {
+                        RoomButton(
+                            navController = navController,
+                            route = "registerRoom",
+                            text = "Crear",
+                            iconRes = R.drawable.square_plus_solid
+                        )
+                    }
+                    item {
+                        RoomButton(
+                            navController = navController,
+                            route = "roomList",
+                            text = "Ver",
+                            iconRes = R.drawable.up_right_from_square_solid
+                        )
+                    }
+                    item {
+                        RoomButton(
+                            navController = navController,
+                            route = "editRoom",
+                            text = "Modificar",
+                            iconRes = R.drawable.pen_to_square_solid
+                        )
+                    }
+                    item {
+                        RoomButton(
+                            navController = navController,
+                            route = "deleteRoom",
+                            text = "Borrar",
+                            iconRes = R.drawable.trash_solid
+                        )
+                    }
+                }
             }
+        }
+    }
+}
 
-            Button(
-                onClick = { navController.navigate("deleteRoom") }, // Navigate to delete room screen
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
-            ) {
-                Text("Borrar")
-            }
+@Composable
+fun RoomButton(navController: NavController, route: String, text: String, iconRes: Int) {
+    Button(
+        onClick = { navController.navigate(route) },
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier
+            .width(120.dp)
+            .height(150.dp)
+            .padding(8.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+                modifier = Modifier.size(48.dp),
+                colorFilter = tint(Color.White)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text)
         }
     }
 }

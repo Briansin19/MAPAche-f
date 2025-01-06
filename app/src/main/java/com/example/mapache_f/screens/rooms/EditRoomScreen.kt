@@ -6,16 +6,19 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mapache_f.classes.Room // Import your Room data class
+import com.example.mapache_f.R
+import com.example.mapache_f.classes.Room
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -38,6 +41,10 @@ fun EditRoomScreen(navController: NavController) {
     var buildingNames by remember { mutableStateOf(listOf<String>()) }
     var buildingIdMap by remember { mutableStateOf(mapOf<String, String>()) }
     var updateSuccess by remember { mutableStateOf(false) }
+    var expandedRoomSpinner by remember { mutableStateOf(false) }
+    var expandedRoomTypeSpinner by remember { mutableStateOf(false) }
+    var expandedBuildingSpinner by remember { mutableStateOf(false) }
+    var isBackButtonEnabled by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance()
@@ -161,170 +168,231 @@ fun EditRoomScreen(navController: NavController) {
             database.getReference("rooms").child(selectedRoomId).setValue(updatedRoom)
                 .addOnSuccessListener {
                     updateSuccess = true
-                    Toast.makeText(context, "Room updated successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Lugar actualizado exitosamente", Toast.LENGTH_SHORT).show()
                     navController.navigate("roomMain")
                 }
                 .addOnFailureListener { e ->
                     updateSuccess = false
-                    Toast.makeText(context, "Failed to update room", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Error al actualizar el Lugar", Toast.LENGTH_SHORT).show()
                     Log.e("EditRoomScreen", "Error updating room: ${e.message}")
                 }
         } else {
-            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
         }
     }
 
-    Surface(color = Color.White) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Room Spinner
-            var expandedRoomSpinner by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expandedRoomSpinner,
-                onExpandedChange = { expandedRoomSpinner = !expandedRoomSpinner }
-            ) {
-                TextField(
-                    value = selectedRoomName,
-                    onValueChange = { selectedRoomName = it },
-                    readOnly = true,
-                    label = { Text("Select Room") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomSpinner) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expandedRoomSpinner,
-                    onDismissRequest = { expandedRoomSpinner = false }
-                ) {
-                    roomNames.forEach { roomName ->
-                        DropdownMenuItem(
-                            text = { Text(roomName) },
-                            onClick = {
-                                selectedRoomName = roomName
-                                expandedRoomSpinner = false
-                            }
-                        )
+    Surface(color = Color.White, modifier = Modifier
+        .fillMaxSize()
+        .padding(WindowInsets.systemBars.asPaddingValues())
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            IconButton(
+                onClick = {
+                    if (isBackButtonEnabled) {
+                        isBackButtonEnabled = false
+                        navController.popBackStack()
                     }
-                }
-            }
-
-            // Room Name
-            OutlinedTextField(
-                value = roomName,
-                onValueChange = { roomName = it },
-                label = { Text("Room Name") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            // Room Description
-            OutlinedTextField(
-                value = roomDescription,
-                onValueChange = { roomDescription = it },
-                label = { Text("Room Description") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            // Room Type Spinner
-            var expandedRoomTypeSpinner by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expandedRoomTypeSpinner,
-                onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
-            ) {
-                TextField(
-                    value = selectedRoomTypeId,
-                    onValueChange = { selectedRoomTypeId = it },
-                    readOnly = true,
-                    label = { Text("Room Type") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomTypeSpinner) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expandedRoomTypeSpinner,
-                    onDismissRequest = { expandedRoomTypeSpinner = false }
-                ) {
-                    roomTypeNames.forEach { roomTypeName -> // Assuming you have a roomTypeNames state variable
-                        DropdownMenuItem(
-                            text = { Text(roomTypeName) },
-                            onClick = {
-                                selectedRoomTypeId = roomTypeName
-                                expandedRoomTypeSpinner = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            // Building Spinner
-            var expandedBuildingSpinner by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expandedBuildingSpinner,
-                onExpandedChange = { expandedBuildingSpinner = !expandedBuildingSpinner }
-            ) {
-                TextField(
-                    value = selectedBuildingId,
-                    onValueChange = { selectedBuildingId = it },
-                    readOnly = true,
-                    label = { Text("Building") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedBuildingSpinner) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expandedBuildingSpinner,
-                    onDismissRequest = { expandedBuildingSpinner = false }
-                ) {
-                    buildingNames.forEach { buildingName -> // Assuming you have a buildingNames state variable
-                        DropdownMenuItem(
-                            text = { Text(buildingName) },
-                            onClick = {
-                                selectedBuildingId = buildingName
-                                expandedBuildingSpinner = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            // Floor Number
-            OutlinedTextField(
-                value = floorNumber,
-                onValueChange = { newValue ->
-                    floorNumber = newValue.filter { it.isDigit() }
                 },
-                label = { Text("Floor Number") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                enabled = isBackButtonEnabled,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            // Update Button
-            Button(
-                onClick = { updateRoom() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
             ) {
-                Text("Update Room")
+                Icon(
+                    painter = painterResource(id = R.drawable.chevron_left_solid),
+                    contentDescription = "AtrÃ¡s",
+                    tint = Color.Black
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Editar Lugar",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = azulTec,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp)
+                )
+
+                // Room Spinner
+                ExposedDropdownMenuBox(
+                    expanded = expandedRoomSpinner,
+                    onExpandedChange = { expandedRoomSpinner = !expandedRoomSpinner }
+                ) {
+                    TextField(
+                        value = selectedRoomName,
+                        onValueChange = { selectedRoomName = it },
+                        readOnly = true,
+                        label = { Text("Seleccionar Lugar") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomSpinner) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedRoomSpinner,
+                        onDismissRequest = { expandedRoomSpinner = false }
+                    ) {
+                        roomNames.forEach { roomName ->
+                            DropdownMenuItem(
+                                text = { Text(roomName) },
+                                onClick = {
+                                    selectedRoomName = roomName
+                                    expandedRoomSpinner = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Room Name
+                OutlinedTextField(
+                    value = roomName,
+                    onValueChange = { roomName = it },
+                    label = { Text("Nombre del Lugar") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                // Room Description
+                OutlinedTextField(
+                    value = roomDescription,
+                    onValueChange = { roomDescription = it },
+                    label = { Text("DescripciÃ³n del Lugar") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                // Room Type Spinner
+                ExposedDropdownMenuBox(
+                    expanded = expandedRoomTypeSpinner,
+                    onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
+                ) {
+                    TextField(
+                        value = selectedRoomTypeId,
+                        onValueChange = { selectedRoomTypeId = it },
+                        readOnly = true,
+                        label = { Text("Tipo de Lugar") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomTypeSpinner) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedRoomTypeSpinner,
+                        onDismissRequest = { expandedRoomTypeSpinner = false }
+                    ) {
+                        roomTypeNames.forEach { roomTypeName ->
+                            DropdownMenuItem(
+                                text = { Text(roomTypeName) },
+                                onClick = {
+                                    selectedRoomTypeId = roomTypeName
+                                    expandedRoomTypeSpinner = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Building Spinner
+                ExposedDropdownMenuBox(
+                    expanded = expandedBuildingSpinner,
+                    onExpandedChange = { expandedBuildingSpinner = !expandedBuildingSpinner }
+                ) {
+                    TextField(
+                        value = selectedBuildingId,
+                        onValueChange = { selectedBuildingId = it },
+                        readOnly = true,
+                        label = { Text("Edificio") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedBuildingSpinner) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedBuildingSpinner,
+                        onDismissRequest = { expandedBuildingSpinner = false }
+                    ) {
+                        buildingNames.forEach { buildingName ->
+                            DropdownMenuItem(
+                                text = { Text(buildingName) },
+                                onClick = {
+                                    selectedBuildingId = buildingName
+                                    expandedBuildingSpinner = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Floor Number
+                OutlinedTextField(
+                    value = floorNumber,
+                    onValueChange = { newValue ->
+                        floorNumber = newValue.filter { it.isDigit() }
+                    },
+                    label = { Text("NÃºmero de Piso") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                // Update Button
+                Button(
+                    onClick = { updateRoom() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                ) {
+                    Text("Actualizar Lugar", color = Color.White)
+                }
             }
         }
     }

@@ -6,23 +6,24 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mapache_f.R
 import com.example.mapache_f.classes.Room
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.example.mapache_f.R
-
+import androidx.compose.ui.text.font.FontWeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +41,7 @@ fun RegisterRoomScreen(navController: NavController) {
 
     var expandedRoomTypeSpinner by remember { mutableStateOf(false) }
     var expandedBuildingSpinner by remember { mutableStateOf(false) }
+    var isBackButtonEnabled by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance()
@@ -109,131 +111,188 @@ fun RegisterRoomScreen(navController: NavController) {
             roomsRef.child(id).setValue(room)
                 .addOnSuccessListener {
                     Log.d("RegisterRoom", "Room stored successfully")
-                    Toast.makeText(context, "Room registered successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Lugar registrada exitosamente", Toast.LENGTH_SHORT).show()
                     navController.navigate("roomMain") // Navigate back to room buttons screen
                 }
                 .addOnFailureListener { e ->
                     Log.w("RegisterRoom", "Error storing Room", e)
-                    Toast.makeText(context, "Failed to register room", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Error al registrar la lugar", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
         }
     }
 
-
-    Surface(color = Color.White) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            OutlinedTextField(
-                value = roomName,
-                onValueChange = { roomName = it },
-                label = { Text("Nombre de la Sala") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            OutlinedTextField(
-                value = roomDescription,
-                onValueChange = { roomDescription = it },
-                label = { Text("Descripción de la Sala") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            // Room Type Spinner
-            ExposedDropdownMenuBox(
-                expanded = expandedRoomTypeSpinner,
-                onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
-            ) {
-                TextField(
-                    value = selectedRoomTypeId,
-                    onValueChange = { selectedRoomTypeId = it },
-                    readOnly = true,
-                    label = { Text("Tipo de Sala") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomTypeSpinner) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expandedRoomTypeSpinner,
-                    onDismissRequest = { expandedRoomTypeSpinner = false }
-                ) {
-                    roomTypeNames.forEach { roomTypeName ->
-                        DropdownMenuItem(
-                            text = { Text(roomTypeName) },
-                            onClick = {
-                                selectedRoomTypeId = roomTypeName
-                                expandedRoomTypeSpinner = false
-                            }
-                        )
+    Surface(color = Color.White, modifier = Modifier
+        .fillMaxSize()
+        .padding(WindowInsets.systemBars.asPaddingValues())
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            IconButton(
+                onClick = {
+                    if (isBackButtonEnabled) {
+                        isBackButtonEnabled = false
+                        navController.popBackStack()
                     }
-                }
-            }
-
-            // Building Spinner
-            ExposedDropdownMenuBox(
-                expanded = expandedBuildingSpinner,
-                onExpandedChange = { expandedBuildingSpinner = !expandedBuildingSpinner }
-            ) {
-                TextField(
-                    value = selectedBuildingId,
-                    onValueChange = { selectedBuildingId = it },
-                    readOnly = true,
-                    label = { Text("Edificio") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedBuildingSpinner) },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expandedBuildingSpinner,
-                    onDismissRequest = { expandedBuildingSpinner = false }
-                ) {
-                    buildingNames.forEach { buildingName ->
-                        DropdownMenuItem(
-                            text = { Text(buildingName) },
-                            onClick = {
-                                selectedBuildingId = buildingName
-                                expandedBuildingSpinner = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            OutlinedTextField(
-                value = floorNumber,
-                onValueChange = { newValue ->
-                    floorNumber = newValue.filter { it.isDigit() }
                 },
-                label = { Text("Floor Number") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                enabled = isBackButtonEnabled,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            Button(
-                onClick = { registerRoom() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
             ) {
-                Text("Registrar Sala")
+                Icon(
+                    painter = painterResource(id = R.drawable.chevron_left_solid),
+                    contentDescription = "Atrás",
+                    tint = Color.Black
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Registrar Lugar",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = azulTec,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp)
+                )
+
+                OutlinedTextField(
+                    value = roomName,
+                    onValueChange = { roomName = it },
+                    label = { Text("Nombre del Lugar") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                OutlinedTextField(
+                    value = roomDescription,
+                    onValueChange = { roomDescription = it },
+                    label = { Text("Descripción del Lugar") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                // Room Type Spinner
+                ExposedDropdownMenuBox(
+                    expanded = expandedRoomTypeSpinner,
+                    onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
+                ) {
+                    TextField(
+                        value = selectedRoomTypeId,
+                        onValueChange = { selectedRoomTypeId = it },
+                        readOnly = true,
+                        label = { Text("Tipo de Lugar") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomTypeSpinner) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedRoomTypeSpinner,
+                        onDismissRequest = { expandedRoomTypeSpinner = false }
+                    ) {
+                        roomTypeNames.forEach { roomTypeName ->
+                            DropdownMenuItem(
+                                text = { Text(roomTypeName) },
+                                onClick = {
+                                    selectedRoomTypeId = roomTypeName
+                                    expandedRoomTypeSpinner = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Building Spinner
+                ExposedDropdownMenuBox(
+                    expanded = expandedBuildingSpinner,
+                    onExpandedChange = { expandedBuildingSpinner = !expandedBuildingSpinner }
+                ) {
+                    TextField(
+                        value = selectedBuildingId,
+                        onValueChange = { selectedBuildingId = it },
+                        readOnly = true,
+                        label = { Text("Edificio") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedBuildingSpinner) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedBuildingSpinner,
+                        onDismissRequest = { expandedBuildingSpinner = false }
+                    ) {
+                        buildingNames.forEach { buildingName ->
+                            DropdownMenuItem(
+                                text = { Text(buildingName) },
+                                onClick = {
+                                    selectedBuildingId = buildingName
+                                    expandedBuildingSpinner = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = floorNumber,
+                    onValueChange = { newValue ->
+                        floorNumber = newValue.filter { it.isDigit() }
+                    },
+                    label = { Text("Número de Piso") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                Button(
+                    onClick = { registerRoom() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                ) {
+                    Text("Registrar Lugar", color = Color.White)
+                }
             }
         }
     }
