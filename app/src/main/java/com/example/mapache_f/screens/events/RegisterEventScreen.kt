@@ -91,7 +91,7 @@ fun RegisterEventScreen(navController: NavController) {
                 .addOnSuccessListener {
                     Log.d("RegisterEvent", "Event stored successfully")
                     Toast.makeText(context, "Event registered successfully", Toast.LENGTH_SHORT).show()
-                    navController.navigate("eventMain")
+                    navController.popBackStack()
                 }
                 .addOnFailureListener { e ->
                     Log.w("RegisterEvent", "Error storing Event", e)

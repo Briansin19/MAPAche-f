@@ -35,7 +35,6 @@ fun DeleteBuildingScreen(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Fetch building names from Room
     LaunchedEffect(Unit) {
         scope.launch {
             withContext(Dispatchers.IO) {
@@ -48,7 +47,6 @@ fun DeleteBuildingScreen(navController: NavController) {
         }
     }
 
-    // Delete building from Room
     fun deleteBuilding(buildingName: String) {
         scope.launch {
             withContext(Dispatchers.IO) {
@@ -58,7 +56,7 @@ fun DeleteBuildingScreen(navController: NavController) {
                     withContext(Dispatchers.Main) {
                         deletionSuccess = true
                         Toast.makeText(context, "Edificio eliminado exitosamente", Toast.LENGTH_SHORT).show()
-                        navController.popBackStack() // Navigate to the previous screen
+                        navController.popBackStack()
                     }
                 } ?: run {
                     withContext(Dispatchers.Main) {
@@ -110,7 +108,6 @@ fun DeleteBuildingScreen(navController: NavController) {
                         .padding(bottom = 16.dp)
                 )
 
-                // Building Spinner
                 var expandedBuildingSpinner by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
                     expanded = expandedBuildingSpinner,
@@ -149,7 +146,6 @@ fun DeleteBuildingScreen(navController: NavController) {
                     }
                 }
 
-                // Delete Button
                 Button(
                     onClick = {
                         if (selectedBuildingName.isNotEmpty()) {

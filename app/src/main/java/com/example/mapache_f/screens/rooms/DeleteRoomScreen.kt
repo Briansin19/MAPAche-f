@@ -32,7 +32,6 @@ fun DeleteRoomScreen(navController: NavController) {
 
     val context = LocalContext.current
 
-    // Fetch room names from Firebase
     LaunchedEffect(Unit) {
         val database = FirebaseDatabase.getInstance()
         database.getReference("rooms").addValueEventListener(object : ValueEventListener {
@@ -51,7 +50,6 @@ fun DeleteRoomScreen(navController: NavController) {
         })
     }
 
-    // Delete room from Firebase
     fun deleteRoom(roomName: String) {
         val database = FirebaseDatabase.getInstance()
         database.getReference("rooms").orderByChild("name").equalTo(roomName)
@@ -62,7 +60,7 @@ fun DeleteRoomScreen(navController: NavController) {
                             .addOnSuccessListener {
                                 deletionSuccess = true
                                 Toast.makeText(context, "Lugar eliminado exitosamente", Toast.LENGTH_SHORT).show()
-                                navController.popBackStack() // Navigate to the previous screen
+                                navController.popBackStack()
                             }
                             .addOnFailureListener { e ->
                                 deletionSuccess = false
@@ -121,7 +119,6 @@ fun DeleteRoomScreen(navController: NavController) {
                         .padding(bottom = 16.dp)
                 )
 
-                // Room Spinner
                 var expandedRoomSpinner by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
                     expanded = expandedRoomSpinner,
@@ -160,7 +157,6 @@ fun DeleteRoomScreen(navController: NavController) {
                     }
                 }
 
-                // Delete Button
                 Button(
                     onClick = {
                         if (selectedRoomName.isNotEmpty()) {

@@ -42,7 +42,6 @@ fun EditBuildingScreen(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    // Fetch building names from Room
     LaunchedEffect(Unit) {
         scope.launch {
             withContext(Dispatchers.IO) {
@@ -55,7 +54,6 @@ fun EditBuildingScreen(navController: NavController) {
         }
     }
 
-    // Load selected building details
     LaunchedEffect(selectedBuilding) {
         selectedBuilding?.let {
             buildingId = it.id
@@ -66,7 +64,6 @@ fun EditBuildingScreen(navController: NavController) {
         }
     }
 
-    // Update building in Room
     fun updateBuilding() {
         val id = buildingId
         val name = buildingName.trim()
@@ -74,7 +71,6 @@ fun EditBuildingScreen(navController: NavController) {
         val longitude = buildingLongitude.toDoubleOrNull() ?: 0.0
 
         if (name.isNotEmpty()) {
-            // Create a new BuildingEntity object with updated values
             val updatedBuilding = BuildingEntity(
                 id = id,
                 name = name,
@@ -88,7 +84,7 @@ fun EditBuildingScreen(navController: NavController) {
                         MyApplication.database.buildingDao().updateBuilding(it)
                     }
                     Toast.makeText(context, "Edificio actualizado exitosamente", Toast.LENGTH_SHORT).show()
-                    navController.popBackStack() // Navigate back
+                    navController.popBackStack()
                 }
             }
         } else {
@@ -136,7 +132,6 @@ fun EditBuildingScreen(navController: NavController) {
                         .padding(bottom = 16.dp)
                 )
 
-                // Building Spinner
                 ExposedDropdownMenuBox(
                     expanded = expandedBuildingSpinner,
                     onExpandedChange = { expandedBuildingSpinner = !expandedBuildingSpinner }

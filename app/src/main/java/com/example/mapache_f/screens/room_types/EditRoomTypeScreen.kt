@@ -89,7 +89,7 @@ fun EditRoomTypeScreen(navController: NavController) {
                 .addOnSuccessListener {
                     updateSuccess = true
                     Toast.makeText(context, "Tipo de lugar actualizado exitosamente", Toast.LENGTH_SHORT).show()
-                    navController.navigate("roomTypeMain")
+                    navController.popBackStack()
                 }
                 .addOnFailureListener { e ->
                     updateSuccess = false

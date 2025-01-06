@@ -34,7 +34,6 @@ fun DeleteEventScreen(navController: NavController) {
 
     val context = LocalContext.current
 
-    // Fetch event names from Firebase
     LaunchedEffect(Unit) {
         val database = FirebaseDatabase.getInstance()
         database.getReference("events").addValueEventListener(object : ValueEventListener {
@@ -53,7 +52,6 @@ fun DeleteEventScreen(navController: NavController) {
         })
     }
 
-    // Delete event from Firebase
     fun deleteEvent(eventName: String) {
         val database = FirebaseDatabase.getInstance()
         database.getReference("events").orderByChild("name").equalTo(eventName)
@@ -64,7 +62,7 @@ fun DeleteEventScreen(navController: NavController) {
                             .addOnSuccessListener {
                                 deletionSuccess = true
                                 Toast.makeText(context, "Evento eliminado exitosamente", Toast.LENGTH_SHORT).show()
-                                navController.popBackStack() // Navigate to the previous screen
+                                navController.popBackStack()
                             }
                             .addOnFailureListener { e ->
                                 deletionSuccess = false

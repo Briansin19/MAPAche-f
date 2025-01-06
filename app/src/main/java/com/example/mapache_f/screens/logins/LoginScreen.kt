@@ -24,7 +24,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mapache_f.R
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.auth.FirebaseAuth
-//import com.google.firebase.auth.UserInfo
 import com.google.firebase.database.FirebaseDatabase
 import com.example.mapache_f.classes.UserInfo
 import com.example.mapache_f.ui.theme.azulTec
@@ -48,7 +47,6 @@ fun LoginScreen(navController: NavController) {
                         val user = auth.currentUser
                         Log.d("LoginSuccess", "User logged in: ${user?.email}")
 
-                        // Accede a la base de datos
                         val database = FirebaseDatabase.getInstance()
                         val usersRef = database.getReference("users")
                         usersRef.child(user?.uid.toString()).get()
@@ -107,7 +105,6 @@ fun LoginScreen(navController: NavController) {
                     alignment = Alignment.Center
                 )
 
-                // Email Input
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -117,7 +114,6 @@ fun LoginScreen(navController: NavController) {
                         .padding(16.dp)
                 )
 
-                // Password Input
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
@@ -138,7 +134,6 @@ fun LoginScreen(navController: NavController) {
                     }
                 )
 
-                // Login Button
                 Button(
                     onClick = { handleLogin(email, password) },
                     modifier = Modifier
@@ -149,7 +144,6 @@ fun LoginScreen(navController: NavController) {
                     Text("Acceder")
                 }
 
-                // Sign Up Button
                 TextButton(
                     onClick = { navController.navigate("signup") },
                     modifier = Modifier

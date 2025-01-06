@@ -51,7 +51,7 @@ fun RegisterBuildingScreen(navController: NavController) {
                     MyApplication.database.buildingDao().insertBuildings(listOf(building))
                 }
                 Toast.makeText(context, "Edificio registrado exitosamente", Toast.LENGTH_SHORT).show()
-                navController.navigate("buildingMain") // Navigate back to building buttons screen
+                navController.popBackStack()
             }
         } else {
             Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()

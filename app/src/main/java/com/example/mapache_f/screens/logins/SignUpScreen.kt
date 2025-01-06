@@ -59,7 +59,7 @@ fun SignUpScreen(navController: NavController) {
                             usersRef.child(user.uid).setValue(userInfo)
                                 .addOnSuccessListener {
                                     Toast.makeText(context, "Sign up successful!", Toast.LENGTH_SHORT).show()
-                                    navController.navigate("login") // Navigate to login screen
+                                    navController.navigate("login")
                                 }
                                 .addOnFailureListener { e ->
                                     Log.w("SignUpError", "Error storing user info", e)
@@ -167,7 +167,7 @@ fun SignUpScreen(navController: NavController) {
                 }
 
                 TextButton(
-                    onClick = { navController.popBackStack() }, // Navigate back to login
+                    onClick = { navController.popBackStack() },
                     modifier = Modifier
                         .padding(16.dp),
                     colors = ButtonDefaults.textButtonColors(contentColor = naranjaTec)

@@ -43,7 +43,7 @@ fun RegisterRoomTypeScreen(navController: NavController) {
                 .addOnSuccessListener {
                     Log.d("RegisterRoomType", "Tipo de lugar registrado exitosamente")
                     Toast.makeText(context, "Tipo de lugar registrado exitosamente", Toast.LENGTH_SHORT).show()
-                    navController.navigate("roomTypeMain")
+                    navController.popBackStack()
                 }
                 .addOnFailureListener { e ->
                     Log.w("RegisterRoomType", "Error al registrar el tipo de lugar", e)

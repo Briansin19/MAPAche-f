@@ -32,7 +32,6 @@ fun DeleteRoomTypeScreen(navController: NavController) {
 
     val context = LocalContext.current
 
-    // Obtener nombres de tipos de lugar desde Firebase
     LaunchedEffect(Unit) {
         val database = FirebaseDatabase.getInstance()
         database.getReference("room_types").addValueEventListener(object : ValueEventListener {
@@ -51,7 +50,6 @@ fun DeleteRoomTypeScreen(navController: NavController) {
         })
     }
 
-    // Eliminar tipo de lugar desde Firebase
     fun deleteRoomType(roomTypeName: String) {
         val database = FirebaseDatabase.getInstance()
         database.getReference("room_types").orderByChild("name").equalTo(roomTypeName)
@@ -62,7 +60,7 @@ fun DeleteRoomTypeScreen(navController: NavController) {
                             .addOnSuccessListener {
                                 deletionSuccess = true
                                 Toast.makeText(context, "Tipo de lugar eliminado exitosamente", Toast.LENGTH_SHORT).show()
-                                navController.popBackStack() // Navegar a la pantalla anterior
+                                navController.popBackStack()
                             }
                             .addOnFailureListener { e ->
                                 deletionSuccess = false

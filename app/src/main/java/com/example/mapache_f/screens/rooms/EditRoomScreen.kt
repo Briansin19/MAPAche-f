@@ -49,7 +49,6 @@ fun EditRoomScreen(navController: NavController) {
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance()
 
-    // Fetch room types from Firebase
     LaunchedEffect(Unit) {
         database.getReference("room_types").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -73,7 +72,6 @@ fun EditRoomScreen(navController: NavController) {
         })
     }
 
-    // Fetch buildings from Firebase
     LaunchedEffect(Unit) {
         database.getReference("buildings").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -97,7 +95,6 @@ fun EditRoomScreen(navController: NavController) {
         })
     }
 
-    // Fetch room names from Firebase
     LaunchedEffect(Unit) {
         database.getReference("rooms").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -115,7 +112,6 @@ fun EditRoomScreen(navController: NavController) {
         })
     }
 
-    // Fetch selected room data
     LaunchedEffect(selectedRoomName) {
         if (selectedRoomName.isNotEmpty()) {
             database.getReference("rooms").orderByChild("name").equalTo(selectedRoomName)
@@ -131,7 +127,6 @@ fun EditRoomScreen(navController: NavController) {
                                 selectedBuildingId = it.buildingId
                                 floorNumber = it.floorNumber.toString()
 
-                                // Set room type and building spinners
                                 val roomTypeName = roomTypeIdMap.entries.find { it.value == selectedRoomTypeId }?.key
                                 roomTypeName?.let { selectedRoomTypeId = it }
 
@@ -149,7 +144,6 @@ fun EditRoomScreen(navController: NavController) {
         }
     }
 
-    // Update room in Firebase
     fun updateRoom() {
         val roomTypeId = roomTypeIdMap[selectedRoomTypeId]
         val buildingId = buildingIdMap[selectedBuildingId]
@@ -169,7 +163,7 @@ fun EditRoomScreen(navController: NavController) {
                 .addOnSuccessListener {
                     updateSuccess = true
                     Toast.makeText(context, "Lugar actualizado exitosamente", Toast.LENGTH_SHORT).show()
-                    navController.navigate("roomMain")
+                    navController.popBackStack()
                 }
                 .addOnFailureListener { e ->
                     updateSuccess = false
@@ -221,7 +215,6 @@ fun EditRoomScreen(navController: NavController) {
                         .padding(bottom = 16.dp)
                 )
 
-                // Room Spinner
                 ExposedDropdownMenuBox(
                     expanded = expandedRoomSpinner,
                     onExpandedChange = { expandedRoomSpinner = !expandedRoomSpinner }
@@ -259,7 +252,6 @@ fun EditRoomScreen(navController: NavController) {
                     }
                 }
 
-                // Room Name
                 OutlinedTextField(
                     value = roomName,
                     onValueChange = { roomName = it },
@@ -274,7 +266,6 @@ fun EditRoomScreen(navController: NavController) {
                         .padding(8.dp)
                 )
 
-                // Room Description
                 OutlinedTextField(
                     value = roomDescription,
                     onValueChange = { roomDescription = it },
@@ -289,7 +280,6 @@ fun EditRoomScreen(navController: NavController) {
                         .padding(8.dp)
                 )
 
-                // Room Type Spinner
                 ExposedDropdownMenuBox(
                     expanded = expandedRoomTypeSpinner,
                     onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
@@ -365,7 +355,6 @@ fun EditRoomScreen(navController: NavController) {
                     }
                 }
 
-                // Floor Number
                 OutlinedTextField(
                     value = floorNumber,
                     onValueChange = { newValue ->
@@ -383,7 +372,6 @@ fun EditRoomScreen(navController: NavController) {
                         .padding(8.dp)
                 )
 
-                // Update Button
                 Button(
                     onClick = { updateRoom() },
                     modifier = Modifier

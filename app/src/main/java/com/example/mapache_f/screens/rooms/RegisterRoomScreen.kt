@@ -46,7 +46,6 @@ fun RegisterRoomScreen(navController: NavController) {
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance()
 
-    // Fetch room types from Firebase
     LaunchedEffect(Unit) {
         database.getReference("room_types").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -70,7 +69,6 @@ fun RegisterRoomScreen(navController: NavController) {
         })
     }
 
-    // Fetch buildings from Firebase
     LaunchedEffect(Unit) {
         database.getReference("buildings").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -112,7 +110,7 @@ fun RegisterRoomScreen(navController: NavController) {
                 .addOnSuccessListener {
                     Log.d("RegisterRoom", "Room stored successfully")
                     Toast.makeText(context, "Lugar registrada exitosamente", Toast.LENGTH_SHORT).show()
-                    navController.navigate("roomMain") // Navigate back to room buttons screen
+                    navController.popBackStack()
                 }
                 .addOnFailureListener { e ->
                     Log.w("RegisterRoom", "Error storing Room", e)
@@ -191,7 +189,6 @@ fun RegisterRoomScreen(navController: NavController) {
                         .padding(8.dp)
                 )
 
-                // Room Type Spinner
                 ExposedDropdownMenuBox(
                     expanded = expandedRoomTypeSpinner,
                     onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
@@ -229,7 +226,6 @@ fun RegisterRoomScreen(navController: NavController) {
                     }
                 }
 
-                // Building Spinner
                 ExposedDropdownMenuBox(
                     expanded = expandedBuildingSpinner,
                     onExpandedChange = { expandedBuildingSpinner = !expandedBuildingSpinner }

@@ -96,7 +96,6 @@ fun EditEventScreen(navController: NavController) {
         }
     }
 
-    // Fetch event names from Firebase
     LaunchedEffect(Unit) {
         eventsRef.addValueEventListener(eventListener)
     }
@@ -107,7 +106,6 @@ fun EditEventScreen(navController: NavController) {
         }
     }
 
-    // Fetch room names from Firebase
     LaunchedEffect(Unit) {
         roomsRef.addValueEventListener(roomListener)
     }
@@ -118,7 +116,6 @@ fun EditEventScreen(navController: NavController) {
         }
     }
 
-    // Fetch selected event data
     LaunchedEffect(selectedEventName) {
         if (selectedEventName.isNotEmpty()) {
             val database = FirebaseDatabase.getInstance()
@@ -136,12 +133,9 @@ fun EditEventScreen(navController: NavController) {
                                 selectedRoomId = it.roomId
                                 selectedEventId = it.id
 
-                                // Set room spinner selection
                                 val roomName = roomIdMap.entries.find { it.value == selectedRoomId }?.key
                                 roomName?.let { selectedRoomName ->
-                                    val roomPosition = roomNames.indexOf(selectedRoomName)
-                                    // You'll need to adapt this part to update the selected room in your UI
-                                    // For example, if you're using an ExposedDropdownMenuBox, you can update the selectedRoomId state
+                                    //val roomPosition = roomNames.indexOf(selectedRoomName)
                                     selectedRoomId = selectedRoomName
                                 }
                             }
@@ -156,13 +150,12 @@ fun EditEventScreen(navController: NavController) {
         }
     }
 
-    // Update event in Firebase
     fun updateEvent() {
-        val roomId = roomIdMap[selectedRoomId] // Get roomId from selected room name
+        val roomId = roomIdMap[selectedRoomId]
 
         if (eventName.isNotEmpty() && eventDescription.isNotEmpty() && eventStartHour.isNotEmpty() && eventStartDate.isNotEmpty() && eventEndDate.isNotEmpty() && roomId != null) {
             val updatedEvent = Events(
-                id = selectedEventId, // Assuming selectedEventName is the event ID
+                id = selectedEventId,
                 name = eventName,
                 description = eventDescription,
                 startHour = eventStartHour,
@@ -176,7 +169,7 @@ fun EditEventScreen(navController: NavController) {
                 .addOnSuccessListener {
                     updateSuccess = true
                     Toast.makeText(context, "Event updated successfully", Toast.LENGTH_SHORT).show()
-                    navController.navigate("eventMain")
+                    navController.popBackStack()
                 }
                 .addOnFailureListener { e ->
                     updateSuccess = false

@@ -66,7 +66,7 @@ fun BuildingMainScreen(navController: NavController) {
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp), // Ajusta la altura segÃºn sea necesario
+                        .height(350.dp),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -125,7 +125,7 @@ fun BuildingButton(navController: NavController, route: String, text: String, ic
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
-                colorFilter = tint(Color.White) // Aplica el filtro de color blanco
+                colorFilter = tint(Color.White)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(text)
