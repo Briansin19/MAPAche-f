@@ -35,7 +35,10 @@ import com.example.mapache_f.ui.theme.naranjaTec
 @Composable
 fun AdminScreen(navController: NavController) {
     Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(WindowInsets.systemBars.asPaddingValues())
+        ) {
             Text(
                 text = "Panel de Admin",
                 fontSize = 24.sp,
@@ -69,7 +72,7 @@ fun AdminScreen(navController: NavController) {
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp), // Ajusta la altura según sea necesario
+                        .height(350.dp), // Ajusta la altura segÃºn sea necesario
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)

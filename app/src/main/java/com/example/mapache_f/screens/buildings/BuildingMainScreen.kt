@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mapache_f.R
 import com.example.mapache_f.screens.AdminButton
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.blancoTec
 import com.example.mapache_f.ui.theme.naranjaTec
 
@@ -37,11 +38,11 @@ fun BuildingMainScreen(navController: NavController) {
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .align(Alignment.TopStart)
+                    .align(Alignment.TopCenter)
                     .padding(16.dp)
                     .background(color = blancoTec, shape = RoundedCornerShape(8.dp))
                     .padding(8.dp),
-                color = Color.Black
+                color = azulTec
             )
             Column(
                 modifier = Modifier
@@ -65,7 +66,7 @@ fun BuildingMainScreen(navController: NavController) {
                     columns = GridCells.Fixed(2),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(350.dp), // Ajusta la altura según sea necesario
+                        .height(350.dp), // Ajusta la altura segÃºn sea necesario
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -112,9 +113,11 @@ fun BuildingMainScreen(navController: NavController) {
 fun BuildingButton(navController: NavController, route: String, text: String, iconRes: Int) {
     Button(
         onClick = { navController.navigate(route) },
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
-            .size(140.dp) // Ajusta el tamaño para que sea más cuadrado
-            .padding(vertical = 8.dp),
+            .width(120.dp)
+            .height(150.dp)
+            .padding(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

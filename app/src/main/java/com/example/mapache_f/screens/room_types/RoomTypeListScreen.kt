@@ -4,16 +4,20 @@ import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mapache_f.classes.RoomTypes // Import your RoomTypes data class
+import androidx.navigation.compose.rememberNavController
+import com.example.mapache_f.classes.RoomTypes
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -23,7 +27,7 @@ import com.google.firebase.database.ValueEventListener
 fun RoomTypeListScreen(navController: NavController) {
     var roomTypes by remember { mutableStateOf<List<RoomTypes>>(emptyList()) }
     val database = FirebaseDatabase.getInstance()
-    val roomTypesRef = database.getReference("room_types") // Change to "room_types"
+    val roomTypesRef = database.getReference("room_types")
 
     val roomTypeListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -51,24 +55,50 @@ fun RoomTypeListScreen(navController: NavController) {
     }
 
     Surface(color = Color.White) {
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(WindowInsets.systemBars.asPaddingValues())
                 .padding(16.dp)
         ) {
-            items(roomTypes) { roomType ->
-                RoomTypeItem(roomType) // Use RoomTypeItem composable
+            Text(
+                text = "Listado de tipos de salas",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 16.dp)
+            )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(roomTypes) { roomType ->
+                    RoomTypeCard(roomType)
+                }
             }
         }
     }
 }
 
 @Composable
-fun RoomTypeItem(roomType: RoomTypes) {
-    Column(modifier = Modifier.padding(8.dp)) {
-        Text("ID: ${roomType.id}")
-        Text("Name: ${roomType.name}")
-        Text("Description: ${roomType.description}")
-        Spacer(modifier = Modifier.height(8.dp)) // Add spacing between items
+fun RoomTypeCard(roomType: RoomTypes) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "ID: ${roomType.id}", fontSize = 16.sp)
+            Text(text = "Name: ${roomType.name}", fontSize = 18.sp, color = Color.Black)
+            Text(text = "Description: ${roomType.description}", fontSize = 14.sp, color = Color.Gray)
+        }
     }
+}
+
+@Preview
+@Composable
+fun RoomTypeListScreenPreview() {
+    RoomTypeListScreen(navController = rememberNavController())
 }

@@ -1,7 +1,6 @@
 package com.example.mapache_f.screens.map
 
 import android.Manifest
-import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.util.Log
@@ -20,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 
@@ -32,10 +30,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import androidx.lifecycle.viewModelScope
-import com.example.mapache_f.screens.map.BuildingEntity
-import com.example.mapache_f.screens.map.MyApplication
-import com.example.mapache_f.screens.map.OpenRouteServiceClient
-import com.example.mapache_f.screens.map.RetrofitClient
 import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
@@ -51,7 +45,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import org.osmdroid.bonuspack.BuildConfig
 
 //import org.osmdroid.bonuspack.BuildConfig
 //import com.example.mapache_f.BuildConfig

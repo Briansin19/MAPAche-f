@@ -1,24 +1,25 @@
 package com.example.mapache_f.screens.buildings
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mapache_f.classes.Building
+import androidx.navigation.compose.rememberNavController
+import com.example.mapache_f.screens.map.BuildingEntity
+import com.example.mapache_f.screens.map.MyApplication
 import com.example.mapache_f.ui.theme.naranjaTec
-import com.google.firebase.database.FirebaseDatabase
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +30,7 @@ fun RegisterBuildingScreen(navController: NavController) {
     var buildingLongitude by remember { mutableStateOf("") }
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     fun registerBuilding() {
         val name = buildingName.trim()
@@ -37,22 +39,15 @@ fun RegisterBuildingScreen(navController: NavController) {
         val longitude = buildingLongitude.toDoubleOrNull() ?: 0.0
 
         if (name.isNotEmpty() && description.isNotEmpty()) {
-            val id = generateUniqueId()
-            val building = Building(id, name, description, latitude, longitude)
+            val building = BuildingEntity(name = name, lat = latitude, lng = longitude)
 
-            val database = FirebaseDatabase.getInstance()
-            val buildingsRef = database.getReference("buildings")
-
-            buildingsRef.child(id).setValue(building)
-                .addOnSuccessListener {
-                    Log.d("RegisterBuilding", "Building stored successfully")
-                    Toast.makeText(context, "Building registered successfully", Toast.LENGTH_SHORT).show()
-                    navController.navigate("buildingMain") // Navigate back to building buttons screen
+            scope.launch {
+                withContext(Dispatchers.IO) {
+                    MyApplication.database.buildingDao().insertBuildings(listOf(building))
                 }
-                .addOnFailureListener { e ->
-                    Log.w("RegisterBuilding", "Error storing Building", e)
-                    Toast.makeText(context, "Failed to register building", Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(context, "Building registered successfully", Toast.LENGTH_SHORT).show()
+                navController.navigate("buildingMain") // Navigate back to building buttons screen
+            }
         } else {
             Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
         }
@@ -117,9 +112,8 @@ fun RegisterBuildingScreen(navController: NavController) {
     }
 }
 
-private fun generateUniqueId(): String {
-    val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
-    return (1..12)
-        .map { allowedChars.random() }
-        .joinToString("")
+@Preview
+@Composable
+fun RegisterBuildingScreenPreview() {
+    RegisterBuildingScreen(navController = rememberNavController())
 }

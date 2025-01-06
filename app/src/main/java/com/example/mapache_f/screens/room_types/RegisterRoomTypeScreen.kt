@@ -5,15 +5,17 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mapache_f.classes.RoomTypes // Import your RoomTypes data class
+import com.example.mapache_f.R
+import com.example.mapache_f.classes.RoomTypes
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.database.FirebaseDatabase
 
@@ -29,7 +31,7 @@ fun RegisterRoomTypeScreen(navController: NavController) {
         val description = roomTypeDescription.trim()
 
         if (name.isNotEmpty() && description.isNotEmpty()) {
-            val id = generateUniqueId() // Assuming you have a function to generate unique IDs
+            val id = generateUniqueId()
             val roomType = RoomTypes(id, name, description)
 
             val database = FirebaseDatabase.getInstance()
@@ -37,20 +39,23 @@ fun RegisterRoomTypeScreen(navController: NavController) {
 
             roomTypesRef.child(id).setValue(roomType)
                 .addOnSuccessListener {
-                    Log.d("RegisterRoomType", "Room type stored successfully")
-                    Toast.makeText(context, "Room type registered successfully", Toast.LENGTH_SHORT).show()
-                    navController.navigate("roomTypeMain") // Navigate back to room type buttons screen
+                    Log.d("RegisterRoomType", "Tipo de sala registrado exitosamente")
+                    Toast.makeText(context, "Tipo de sala registrado exitosamente", Toast.LENGTH_SHORT).show()
+                    navController.navigate("roomTypeMain")
                 }
                 .addOnFailureListener { e ->
-                    Log.w("RegisterRoomType", "Error storing Room type", e)
-                    Toast.makeText(context, "Failed to register room type", Toast.LENGTH_SHORT).show()
+                    Log.w("RegisterRoomType", "Error al registrar el tipo de sala", e)
+                    Toast.makeText(context, "Error al registrar el tipo de sala", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
         }
     }
 
-    Surface(color = Color.White) {
+    Surface(color = Color.White, modifier = Modifier
+        .fillMaxSize()
+        .padding(WindowInsets.systemBars.asPaddingValues())
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -58,10 +63,19 @@ fun RegisterRoomTypeScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = "Registrar Tipo de Sala",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(bottom = 16.dp)
+            )
+
             OutlinedTextField(
                 value = roomTypeName,
                 onValueChange = { roomTypeName = it },
-                label = { Text("Room Type Name") },
+                label = { Text("Nombre del Tipo de Sala") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -70,7 +84,7 @@ fun RegisterRoomTypeScreen(navController: NavController) {
             OutlinedTextField(
                 value = roomTypeDescription,
                 onValueChange = { roomTypeDescription = it },
-                label = { Text("Room Type Description") },
+                label = { Text("DescripciÃ³n del Tipo de Sala") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
@@ -83,7 +97,7 @@ fun RegisterRoomTypeScreen(navController: NavController) {
                     .padding(8.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
             ) {
-                Text("Register Room Type")
+                Text("Registrar Tipo de Sala")
             }
         }
     }

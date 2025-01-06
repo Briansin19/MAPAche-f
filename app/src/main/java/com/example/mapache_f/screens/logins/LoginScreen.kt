@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth
 //import com.google.firebase.auth.UserInfo
 import com.google.firebase.database.FirebaseDatabase
 import com.example.mapache_f.classes.UserInfo
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.blancoTec
 
 
@@ -88,7 +89,7 @@ fun LoginScreen(navController: NavController) {
                     .padding(16.dp)
                     .background(color = blancoTec, shape = RoundedCornerShape(8.dp))
                     .padding(8.dp),
-                color = Color.Black
+                color = azulTec
             )
             Column(
                 modifier = Modifier

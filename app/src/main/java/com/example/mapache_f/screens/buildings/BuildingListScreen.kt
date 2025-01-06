@@ -53,7 +53,7 @@ fun BuildingListScreen(navController: NavController) {
                     .padding(16.dp)
                     .background(color = blancoTec, shape = RoundedCornerShape(8.dp))
                     .padding(8.dp),
-                color = Color.Black
+                color = azulTec
             )
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 128.dp),
