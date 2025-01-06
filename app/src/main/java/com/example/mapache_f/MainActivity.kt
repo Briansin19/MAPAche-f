@@ -68,6 +68,8 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+       // (application as MyApplication).deleteDatabase()
+
         // Recuperar datos de la base de datos
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {

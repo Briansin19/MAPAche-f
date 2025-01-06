@@ -16,4 +16,11 @@ class MyApplication : Application() {
             "mapdatabase.db"
         ).build()
     }
+
+    /*
+    fun deleteDatabase() {
+        applicationContext.deleteDatabase("mapdatabase.db")
+
+    }
+     */
 }
