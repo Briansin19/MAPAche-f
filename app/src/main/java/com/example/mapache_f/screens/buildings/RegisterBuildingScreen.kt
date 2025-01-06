@@ -25,7 +25,6 @@ import kotlinx.coroutines.withContext
 @Composable
 fun RegisterBuildingScreen(navController: NavController) {
     var buildingName by remember { mutableStateOf("") }
-    var buildingDescription by remember { mutableStateOf("") }
     var buildingLatitude by remember { mutableStateOf("") }
     var buildingLongitude by remember { mutableStateOf("") }
 
@@ -34,11 +33,10 @@ fun RegisterBuildingScreen(navController: NavController) {
 
     fun registerBuilding() {
         val name = buildingName.trim()
-        val description = buildingDescription.trim()
         val latitude = buildingLatitude.toDoubleOrNull() ?: 0.0
         val longitude = buildingLongitude.toDoubleOrNull() ?: 0.0
 
-        if (name.isNotEmpty() && description.isNotEmpty()) {
+        if (name.isNotEmpty()) {
             val building = BuildingEntity(name = name, lat = latitude, lng = longitude)
 
             scope.launch {
@@ -65,15 +63,6 @@ fun RegisterBuildingScreen(navController: NavController) {
                 value = buildingName,
                 onValueChange = { buildingName = it },
                 label = { Text("Nombre del Edificio") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            OutlinedTextField(
-                value = buildingDescription,
-                onValueChange = { buildingDescription = it },
-                label = { Text("Descripción del Edificio") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)

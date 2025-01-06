@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mapache_f.R
 import com.example.mapache_f.classes.RoomTypes
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.database.FirebaseDatabase
 
@@ -24,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase
 fun RegisterRoomTypeScreen(navController: NavController) {
     var roomTypeName by remember { mutableStateOf("") }
     var roomTypeDescription by remember { mutableStateOf("") }
+    var isBackButtonEnabled by remember { mutableStateOf(true) }
     val context = LocalContext.current
 
     fun registerRoomType() {
@@ -39,13 +41,13 @@ fun RegisterRoomTypeScreen(navController: NavController) {
 
             roomTypesRef.child(id).setValue(roomType)
                 .addOnSuccessListener {
-                    Log.d("RegisterRoomType", "Tipo de sala registrado exitosamente")
-                    Toast.makeText(context, "Tipo de sala registrado exitosamente", Toast.LENGTH_SHORT).show()
+                    Log.d("RegisterRoomType", "Tipo de lugar registrado exitosamente")
+                    Toast.makeText(context, "Tipo de lugar registrado exitosamente", Toast.LENGTH_SHORT).show()
                     navController.navigate("roomTypeMain")
                 }
                 .addOnFailureListener { e ->
-                    Log.w("RegisterRoomType", "Error al registrar el tipo de sala", e)
-                    Toast.makeText(context, "Error al registrar el tipo de sala", Toast.LENGTH_SHORT).show()
+                    Log.w("RegisterRoomType", "Error al registrar el tipo de lugar", e)
+                    Toast.makeText(context, "Error al registrar el tipo de lugar", Toast.LENGTH_SHORT).show()
                 }
         } else {
             Toast.makeText(context, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
@@ -56,48 +58,79 @@ fun RegisterRoomTypeScreen(navController: NavController) {
         .fillMaxSize()
         .padding(WindowInsets.systemBars.asPaddingValues())
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Registrar Tipo de Sala",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
+        Box(modifier = Modifier.fillMaxSize()) {
+            IconButton(
+                onClick = {
+                    if (isBackButtonEnabled) {
+                        isBackButtonEnabled = false
+                        navController.popBackStack()
+                    }
+                },
+                enabled = isBackButtonEnabled,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 16.dp)
-            )
-
-            OutlinedTextField(
-                value = roomTypeName,
-                onValueChange = { roomTypeName = it },
-                label = { Text("Nombre del Tipo de Sala") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            OutlinedTextField(
-                value = roomTypeDescription,
-                onValueChange = { roomTypeDescription = it },
-                label = { Text("DescripciÃ³n del Tipo de Sala") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
-
-            Button(
-                onClick = { registerRoomType() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
             ) {
-                Text("Registrar Tipo de Sala")
+                Icon(
+                    painter = painterResource(id = R.drawable.chevron_left_solid),
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Registrar Tipo de Lugar",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = azulTec,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp)
+                )
+
+                OutlinedTextField(
+                    value = roomTypeName,
+                    onValueChange = { roomTypeName = it },
+                    label = { Text("Nombre del Tipo de Lugar") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                OutlinedTextField(
+                    value = roomTypeDescription,
+                    onValueChange = { roomTypeDescription = it },
+                    label = { Text("DescripciÃ³n del Tipo de Lugar") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+
+                Button(
+                    onClick = { registerRoomType() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                ) {
+                    Text("Registrar Tipo de Lugar", color = Color.White)
+                }
             }
         }
     }

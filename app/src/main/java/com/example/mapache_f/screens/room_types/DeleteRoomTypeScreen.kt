@@ -5,14 +5,17 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mapache_f.R
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -25,10 +28,11 @@ fun DeleteRoomTypeScreen(navController: NavController) {
     var selectedRoomTypeName by remember { mutableStateOf("") }
     var roomTypeNames by remember { mutableStateOf(listOf<String>()) }
     var deletionSuccess by remember { mutableStateOf(false) }
+    var isBackButtonEnabled by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
 
-    // Fetch room type names from Firebase
+    // Obtener nombres de tipos de lugar desde Firebase
     LaunchedEffect(Unit) {
         val database = FirebaseDatabase.getInstance()
         database.getReference("room_types").addValueEventListener(object : ValueEventListener {
@@ -42,12 +46,12 @@ fun DeleteRoomTypeScreen(navController: NavController) {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Log.e("DeleteRoomTypeScreen", "Error fetching room type names: ${databaseError.message}")
+                Log.e("DeleteRoomTypeScreen", "Error al obtener nombres de tipos de lugar: ${databaseError.message}")
             }
         })
     }
 
-    // Delete room type from Firebase
+    // Eliminar tipo de lugar desde Firebase
     fun deleteRoomType(roomTypeName: String) {
         val database = FirebaseDatabase.getInstance()
         database.getReference("room_types").orderByChild("name").equalTo(roomTypeName)
@@ -57,13 +61,13 @@ fun DeleteRoomTypeScreen(navController: NavController) {
                         snapshot.ref.removeValue()
                             .addOnSuccessListener {
                                 deletionSuccess = true
-                                Toast.makeText(context, "Room type deleted successfully", Toast.LENGTH_SHORT).show()
-                                navController.popBackStack() // Navigate to the previous screen
+                                Toast.makeText(context, "Tipo de lugar eliminado exitosamente", Toast.LENGTH_SHORT).show()
+                                navController.popBackStack() // Navegar a la pantalla anterior
                             }
                             .addOnFailureListener { e ->
                                 deletionSuccess = false
-                                Toast.makeText(context, "Failed to delete room type", Toast.LENGTH_SHORT).show()
-                                Log.e("DeleteRoomTypeScreen", "Error deleting room type: ${e.message}")
+                                Toast.makeText(context, "Error al eliminar el tipo de lugar", Toast.LENGTH_SHORT).show()
+                                Log.e("DeleteRoomTypeScreen", "Error al eliminar el tipo de lugar: ${e.message}")
                             }
                         return
                     }
@@ -71,66 +75,104 @@ fun DeleteRoomTypeScreen(navController: NavController) {
 
                 override fun onCancelled(databaseError: DatabaseError) {
                     deletionSuccess = false
-                    Toast.makeText(context, "Failed to delete room type", Toast.LENGTH_SHORT).show()
-                    Log.e("DeleteRoomTypeScreen", "Error deleting room type: ${databaseError.message}")
+                    Toast.makeText(context, "Error al eliminar el tipo de lugar", Toast.LENGTH_SHORT).show()
+                    Log.e("DeleteRoomTypeScreen", "Error al eliminar el tipo de lugar: ${databaseError.message}")
                 }
             })
     }
 
-    Surface(color = Color.White) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Room Type Spinner
-            var expandedRoomTypeSpinner by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expandedRoomTypeSpinner,
-                onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
-            ) {
-                TextField(
-                    value = selectedRoomTypeName,
-                    onValueChange = { selectedRoomTypeName = it },
-                    readOnly = true,
-                    label = { Text("Select Room Type") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomTypeSpinner) },
-                    modifier = Modifier.menuAnchor().fillMaxWidth()
-                )
-
-                ExposedDropdownMenu(
-                    expanded = expandedRoomTypeSpinner,
-                    onDismissRequest = { expandedRoomTypeSpinner = false }
-                ) {
-                    roomTypeNames.forEach { roomTypeName ->
-                        DropdownMenuItem(
-                            text = { Text(roomTypeName) },
-                            onClick = {
-                                selectedRoomTypeName = roomTypeName
-                                expandedRoomTypeSpinner = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            // Delete Button
-            Button(
+    Surface(color = Color.White, modifier = Modifier
+        .fillMaxSize()
+        .padding(WindowInsets.systemBars.asPaddingValues())
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            IconButton(
                 onClick = {
-                    if (selectedRoomTypeName.isNotEmpty()) {
-                        deleteRoomType(selectedRoomTypeName)
-                    } else {
-                        Toast.makeText(context, "Please select a room type to delete", Toast.LENGTH_SHORT).show()
+                    if (isBackButtonEnabled) {
+                        isBackButtonEnabled = false
+                        navController.popBackStack()
                     }
                 },
+                enabled = isBackButtonEnabled,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
             ) {
-                Text("Delete Room Type")
+                Icon(
+                    painter = painterResource(id = R.drawable.chevron_left_solid),
+                    contentDescription = "AtrÃ¡s",
+                    tint = Color.Black
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Eliminar Tipo de Lugar",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = azulTec,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp)
+                )
+
+                var expandedRoomTypeSpinner by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(
+                    expanded = expandedRoomTypeSpinner,
+                    onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
+                ) {
+                    TextField(
+                        value = selectedRoomTypeName,
+                        onValueChange = { selectedRoomTypeName = it },
+                        readOnly = true,
+                        label = { Text("Seleccionar Tipo de Lugar") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomTypeSpinner) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedRoomTypeSpinner,
+                        onDismissRequest = { expandedRoomTypeSpinner = false }
+                    ) {
+                        roomTypeNames.forEach { roomTypeName ->
+                            DropdownMenuItem(
+                                text = { Text(roomTypeName) },
+                                onClick = {
+                                    selectedRoomTypeName = roomTypeName
+                                    expandedRoomTypeSpinner = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        if (selectedRoomTypeName.isNotEmpty()) {
+                            deleteRoomType(selectedRoomTypeName)
+                        } else {
+                            Toast.makeText(context, "Por favor, seleccione un tipo de lugar para eliminar", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                ) {
+                    Text("Eliminar Tipo de Lugar", color = Color.White)
+                }
             }
         }
     }

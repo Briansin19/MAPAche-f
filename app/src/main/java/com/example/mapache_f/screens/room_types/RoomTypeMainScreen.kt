@@ -53,7 +53,7 @@ fun RoomTypeMainScreen(navController: NavController) {
                 )
             }
             Text(
-                text = "Tipos de Sala",
+                text = "Tipos de Lugares",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier

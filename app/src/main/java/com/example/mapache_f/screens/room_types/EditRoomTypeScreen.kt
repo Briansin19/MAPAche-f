@@ -5,15 +5,18 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mapache_f.classes.RoomTypes // Import your RoomTypes data class
+import com.example.mapache_f.R
+import com.example.mapache_f.classes.RoomTypes
+import com.example.mapache_f.ui.theme.azulTec
 import com.example.mapache_f.ui.theme.naranjaTec
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -29,11 +32,11 @@ fun EditRoomTypeScreen(navController: NavController) {
     var roomTypeDescription by remember { mutableStateOf("") }
     var roomTypeNames by remember { mutableStateOf(listOf<String>()) }
     var updateSuccess by remember { mutableStateOf(false) }
+    var isBackButtonEnabled by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
     val database = FirebaseDatabase.getInstance()
 
-    // Fetch room type names from Firebase
     LaunchedEffect(Unit) {
         database.getReference("room_types").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -51,7 +54,6 @@ fun EditRoomTypeScreen(navController: NavController) {
         })
     }
 
-    // Fetch selected room type data
     LaunchedEffect(selectedRoomTypeName) {
         if (selectedRoomTypeName.isNotEmpty()) {
             database.getReference("room_types").orderByChild("name").equalTo(selectedRoomTypeName)
@@ -75,7 +77,6 @@ fun EditRoomTypeScreen(navController: NavController) {
         }
     }
 
-    // Update room type in Firebase
     fun updateRoomType() {
         if (roomTypeName.isNotEmpty() && roomTypeDescription.isNotEmpty()) {
             val updatedRoomType = RoomTypes(
@@ -87,89 +88,133 @@ fun EditRoomTypeScreen(navController: NavController) {
             database.getReference("room_types").child(selectedRoomTypeId).setValue(updatedRoomType)
                 .addOnSuccessListener {
                     updateSuccess = true
-                    Toast.makeText(context, "Room type updated successfully", Toast.LENGTH_SHORT).show()
-                    navController.navigate("roomTypeMain") // Navigate back to room type buttons screen
+                    Toast.makeText(context, "Tipo de lugar actualizado exitosamente", Toast.LENGTH_SHORT).show()
+                    navController.navigate("roomTypeMain")
                 }
                 .addOnFailureListener { e ->
                     updateSuccess = false
-                    Toast.makeText(context, "Failed to update room type", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Error al actualizar el tipo de lugar", Toast.LENGTH_SHORT).show()
                     Log.e("EditRoomTypeScreen", "Error updating room type: ${e.message}")
                 }
         } else {
-            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Por favor, complete todos los campos", Toast.LENGTH_SHORT).show()
         }
     }
 
-    Surface(color = Color.White) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Room Type Spinner
-            var expandedRoomTypeSpinner by remember { mutableStateOf(false) }
-            ExposedDropdownMenuBox(
-                expanded = expandedRoomTypeSpinner,
-                onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
+    Surface(color = Color.White, modifier = Modifier
+        .fillMaxSize()
+        .padding(WindowInsets.systemBars.asPaddingValues())
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            IconButton(
+                onClick = {
+                    if (isBackButtonEnabled) {
+                        isBackButtonEnabled = false
+                        navController.popBackStack()
+                    }
+                },
+                enabled = isBackButtonEnabled,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(16.dp)
             ) {
-                TextField(
-                    value = selectedRoomTypeName,
-                    onValueChange = { selectedRoomTypeName = it },
-                    readOnly = true,
-                    label = { Text("Select Room Type") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomTypeSpinner) },
+                Icon(
+                    painter = painterResource(id = R.drawable.chevron_left_solid),
+                    contentDescription = "Atrás",
+                    tint = Color.Black
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Editar Tipo de Lugar",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = azulTec,
                     modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp)
                 )
 
-                ExposedDropdownMenu(
+                var expandedRoomTypeSpinner by remember { mutableStateOf(false) }
+                ExposedDropdownMenuBox(
                     expanded = expandedRoomTypeSpinner,
-                    onDismissRequest = { expandedRoomTypeSpinner = false }
+                    onExpandedChange = { expandedRoomTypeSpinner = !expandedRoomTypeSpinner }
                 ) {
-                    roomTypeNames.forEach { roomTypeName ->
-                        DropdownMenuItem(
-                            text = { Text(roomTypeName) },
-                            onClick = {
-                                selectedRoomTypeName = roomTypeName
-                                expandedRoomTypeSpinner = false
-                            }
-                        )
+                    TextField(
+                        value = selectedRoomTypeName,
+                        onValueChange = { selectedRoomTypeName = it },
+                        readOnly = true,
+                        label = { Text("Seleccionar Tipo de Lugar") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRoomTypeSpinner) },
+                        colors = TextFieldDefaults.textFieldColors(
+                            focusedIndicatorColor = naranjaTec,
+                            unfocusedIndicatorColor = azulTec,
+                            cursorColor = naranjaTec
+                        ),
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedRoomTypeSpinner,
+                        onDismissRequest = { expandedRoomTypeSpinner = false }
+                    ) {
+                        roomTypeNames.forEach { roomTypeName ->
+                            DropdownMenuItem(
+                                text = { Text(roomTypeName) },
+                                onClick = {
+                                    selectedRoomTypeName = roomTypeName
+                                    expandedRoomTypeSpinner = false
+                                }
+                            )
+                        }
                     }
                 }
-            }
 
-            // Room Type Name
-            OutlinedTextField(
-                value = roomTypeName,
-                onValueChange = { roomTypeName = it },
-                label = { Text("Room Type Name") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
+                OutlinedTextField(
+                    value = roomTypeName,
+                    onValueChange = { roomTypeName = it },
+                    label = { Text("Nombre del Tipo de Lugar") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
 
-            // Room Type Description
-            OutlinedTextField(
-                value = roomTypeDescription,
-                onValueChange = { roomTypeDescription = it },
-                label = { Text("Room Type Description") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
+                OutlinedTextField(
+                    value = roomTypeDescription,
+                    onValueChange = { roomTypeDescription = it },
+                    label = { Text("Descripción del Tipo de Lugar") },
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = naranjaTec,
+                        unfocusedBorderColor = azulTec,
+                        cursorColor = naranjaTec
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
 
-            // Update Button
-            Button(
-                onClick = { updateRoomType() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
-            ) {
-                Text("Update Room Type")
+                Button(
+                    onClick = { updateRoomType() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = naranjaTec)
+                ) {
+                    Text("Actualizar Tipo de Lugar", color = Color.White)
+                }
             }
         }
     }
