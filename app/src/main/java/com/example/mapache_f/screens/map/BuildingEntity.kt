@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "buildings")
 data class BuildingEntity(
-    @PrimaryKey val name: String,
+    @PrimaryKey val id: String,
+    val name: String,
     val lat: Double,
     val lng: Double
 )

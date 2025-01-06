@@ -169,7 +169,7 @@ class MapViewModel : ViewModel() {
                     Log.d("Building", "Cantidad de edificios obtenidos: ${buildings.size}")
                     // Convertir a BuildingEntity
                     val entities = buildings.map { b ->
-                        BuildingEntity(name = b.name, lat = b.lat, lng = b.lng)
+                        BuildingEntity(id = b.id, name = b.name, lat = b.lat, lng = b.lng)
                     }
 
                     withContext(Dispatchers.IO) {

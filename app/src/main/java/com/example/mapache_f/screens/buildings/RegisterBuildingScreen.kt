@@ -32,12 +32,13 @@ fun RegisterBuildingScreen(navController: NavController) {
     val scope = rememberCoroutineScope()
 
     fun registerBuilding() {
+        val id = generateUniqueId()
         val name = buildingName.trim()
         val latitude = buildingLatitude.toDoubleOrNull() ?: 0.0
         val longitude = buildingLongitude.toDoubleOrNull() ?: 0.0
 
         if (name.isNotEmpty()) {
-            val building = BuildingEntity(name = name, lat = latitude, lng = longitude)
+            val building = BuildingEntity(id = id, name = name, lat = latitude, lng = longitude)
 
             scope.launch {
                 withContext(Dispatchers.IO) {
@@ -99,6 +100,13 @@ fun RegisterBuildingScreen(navController: NavController) {
             }
         }
     }
+}
+
+private fun generateUniqueId(): String {
+    val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+    return (1..12)
+        .map { allowedChars.random() }
+        .joinToString("")
 }
 
 @Preview

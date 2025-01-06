@@ -25,6 +25,7 @@ import kotlinx.coroutines.withContext
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditBuildingScreen(navController: NavController) {
+    var buildingId by remember { mutableStateOf("") }
     var buildingName by remember { mutableStateOf("") }
     var buildingLatitude by remember { mutableStateOf("") }
     var buildingLongitude by remember { mutableStateOf("") }
@@ -51,6 +52,7 @@ fun EditBuildingScreen(navController: NavController) {
     // Load selected building details
     LaunchedEffect(selectedBuilding) {
         selectedBuilding?.let {
+            buildingId = it.id
             buildingName = it.name
             buildingLatitude = it.lat.toString()
             buildingLongitude = it.lng.toString()
@@ -60,12 +62,19 @@ fun EditBuildingScreen(navController: NavController) {
 
     // Update building in Room
     fun updateBuilding() {
+        val id = buildingId
         val name = buildingName.trim()
         val latitude = buildingLatitude.toDoubleOrNull() ?: 0.0
         val longitude = buildingLongitude.toDoubleOrNull() ?: 0.0
 
         if (name.isNotEmpty()) {
-            val updatedBuilding = selectedBuilding?.copy(name = name, lat = latitude, lng = longitude)
+            // Create a new BuildingEntity object with updated values
+            val updatedBuilding = BuildingEntity(
+                id = id,
+                name = name,
+                lat = latitude,
+                lng = longitude
+            )
 
             updatedBuilding?.let {
                 scope.launch {
